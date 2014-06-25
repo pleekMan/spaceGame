@@ -36,9 +36,8 @@ public class Main extends PApplet {
 		background(0);
 		
 		ring.update();
-		
 		ship.update();
-		ship.maneuver();
+		//ship.maneuver();
 
 		
 		if (ring.isInside(ship.getPosition().x, ship.getPosition().y)) {
@@ -57,6 +56,7 @@ public class Main extends PApplet {
 			
 		} else {
 			ship.setColor(color(0,255,255));
+			ship.addForce(new PVector(0,0));
 		}
 		
 		ring.render();

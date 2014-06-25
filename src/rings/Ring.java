@@ -2,6 +2,7 @@ package rings;
 
 import globals.Main;
 import globals.PAppletSingleton;
+import processing.core.PImage;
 import processing.core.PVector;
 
 public class Ring {
@@ -18,6 +19,9 @@ public class Ring {
 
 	float tunnelCenter;
 	float tunnelSpread;
+	
+	PImage ringImage;
+	PImage ringImageMask;
 
 	public Ring(float _x, float _y, int _color) {
 		p5 = getP5();
@@ -120,7 +124,7 @@ public class Ring {
 		shipToCenter.normalize();
 		float mg = p5.dist(inVector.x, inVector.y, pos.x, pos.y);
 		shipToCenter.mult(getAngularVelocity() * mg);
-		System.out.println("ShipToCenter: " + p5.dist(inVector.x, inVector.y, pos.x, pos.y) + " / AngVel: " + getAngularVelocity() + " / Result: " + shipToCenter.mag()  *  getAngularVelocity());
+		System.out.println("ShipToCenter: " + mg + " / AngVel: " + getAngularVelocity() + " / Result: " + getAngularVelocity() * mg);
 		p5.stroke(255, 0, 0);
 		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 

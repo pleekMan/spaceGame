@@ -16,7 +16,7 @@ public class Ship {
 	int shipColor;
 	
 	boolean controlled = false;
-	//PVector externalForce;
+	PVector externalForce;
 
 	public Ship() {
 
@@ -29,6 +29,7 @@ public class Ship {
 		rotation = 0f;
 		
 		shipColor = p5.color(255,255,0);
+		externalForce = new PVector(0,0);
 
 	}
 
@@ -39,6 +40,8 @@ public class Ship {
 
 	public void update() {
 
+		maneuver();
+		vel.add(externalForce);
 		pos.add(vel);
 
 	}
@@ -67,7 +70,7 @@ public class Ship {
 	
 	public void addForce(PVector force){
 		//force.mult(-1);
-		vel.add(force);	
+		externalForce = force;
 	}
 	
 	public void resetPosition(){
@@ -75,11 +78,11 @@ public class Ship {
 		vel.set(0,0);
 	}
 	
-	public void maneuver(){
+	private void maneuver(){
 		if(controlled){
 			//p5.println("Vectoring Ship");
 			vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height * 0.5f));
-			//vel.mult(0.1f);
+			vel.mult(0.1f);
 			p5.stroke(255, 255, 0);
 			p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
 		}
