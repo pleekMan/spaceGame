@@ -14,7 +14,7 @@ public class Ship {
 	float size;
 	float rotation;
 	int shipColor;
-	
+
 	boolean controlled = false;
 	PVector externalForce;
 
@@ -24,12 +24,12 @@ public class Ship {
 
 		pos = new PVector(p5.width * 0.5f, p5.height - 10f);
 		vel = new PVector(0, 0);
-		
+
 		size = 20f;
 		rotation = 0f;
-		
-		shipColor = p5.color(255,255,0);
-		externalForce = new PVector(0,0);
+
+		shipColor = p5.color(150, 100, 100);
+		externalForce = new PVector(0, 0);
 
 	}
 
@@ -54,33 +54,34 @@ public class Ship {
 		p5.stroke(shipColor);
 
 		p5.ellipse(pos.x, pos.y, size, size);
+		p5.ellipse(pos.x, pos.y, size * 0.5f, size * 0.5f);
 
 		p5.popStyle();
 
 	}
-	
-	public PVector getPosition(){
+
+	public PVector getPosition() {
 		return pos;
 	}
-	
-	public void setColor(int _color){
+
+	public void setColor(int _color) {
 		shipColor = _color;
-		
+
 	}
-	
-	public void addForce(PVector force){
-		//force.mult(-1);
+
+	public void addForce(PVector force) {
+		// force.mult(-1);
 		externalForce = force;
 	}
-	
-	public void resetPosition(){
+
+	public void resetPosition() {
 		pos.set(p5.width * 0.5f, p5.height - 10f);
-		vel.set(0,0);
+		vel.set(0, 0);
 	}
-	
-	private void maneuver(){
-		if(controlled){
-			//p5.println("Vectoring Ship");
+
+	private void maneuver() {
+		if (controlled) {
+			// p5.println("Vectoring Ship");
 			vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height * 0.5f));
 			vel.mult(0.1f);
 			p5.stroke(255, 255, 0);
@@ -95,22 +96,21 @@ public class Ship {
 		p5.stroke(255, 255, 0);
 		p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
 	}
-	
-	public void onMousePressed(){
+
+	public void onMousePressed() {
 		controlled = true;
 		p5.println("onMP");
 
 	}
-	
-	public void onMouseReleased(){
+
+	public void onMouseReleased() {
 		controlled = false;
 		p5.println("onMR");
 
 	}
-	
-	public void onMouseMoved(){
+
+	public void onMouseMoved() {
 		p5.println("onMM");
 	}
-	
-	
+
 }

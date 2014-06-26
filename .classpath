@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/Ani.jar"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/processing Core/core_2.0.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
