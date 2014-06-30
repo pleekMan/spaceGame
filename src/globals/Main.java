@@ -7,27 +7,34 @@ import ships.Ship;
 public class Main extends PApplet {
 
 	Ship ship;
-	Ring ring;
-	Ring ring2;
+	//Ring ring;
+	//Ring ring2;
 
-
+	LevelManager levelManager;
+	
 	public void setup() {
 
 		setPAppletSingleton();
 
-		size(700, 700, P3D);
+		size(1000, 1000, P3D);
 		frameRate(30);
 		smooth();
 
 		ship = new Ship();
-		ring = new Ring(width * 0.5f, height * 0.5f, color(0, 200, 200), 200f, 300f);
-		ring.setImage(loadImage("image01.png"));
-		ring.setAngularVelocity(TWO_PI * 0.01f);
 		
-		ring2 = new Ring(width * 0.5f, height * 0.5f, color(200, 0, 200), 100f, 200f);
-		ring2.setImage(loadImage("image01.png"));
-		ring.setAngularVelocity(-(TWO_PI * 0.005f));
-
+		levelManager = new LevelManager();
+		levelManager.setup(2, ship);
+		
+		//ring = new Ring(width * 0.5f, height * 0.5f, color(0, 200, 200), 200f, 300f);
+		//ring.setImage(loadImage("image01.png"));
+		//ring.setAngularVelocity(TWO_PI * 0.01f);
+		
+		//ring2 = new Ring(width * 0.5f, height * 0.5f, color(200, 0, 200), 100f, 200f);
+		//ring2.setImage(loadImage("image01.png"));
+		//ring.setAngularVelocity(-(TWO_PI * 0.005f));
+		
+		
+		
 	}
 
 	public static void main(String args[]) {
@@ -51,53 +58,19 @@ public class Main extends PApplet {
 			line(i, 0, i, height);
 		}
 
-		ring.update();
-		ring2.update();
-		ship.update();
+		//ring.update();
+		//ring2.update();
+		
+		levelManager.update();
+		//ship.update();
 		// ship.maneuver();
 
-		if (ring.isInside(ship.getPosition().x, ship.getPosition().y)) {
-			ship.setColor(color(255, 255, 0));
-			ring.modifyVelocity(ship.getPosition().x, ship.getPosition().y);
+		
 
-			// PVector shipToCenter = new PVector(ring.getPosition().x -
-			// ship.getPosition().x, ring.getPosition().y -
-			// ship.getPosition().y);
-			// shipToCenter.normalize();
-			// shipToCenter.rotate(-PI);
-			// shipToCenter.mult(ring.getAngularVelocity() * 10);
-			// println(shipToCenter);
-			// ship.addForce(shipToCenter);
-			// line(ship.getPosition().x,
-			// ship.getPosition().y,ship.getPosition().x + shipToCenter.x,
-			// ship.getPosition().y + shipToCenter.y);
-			ship.addForce(ring.getAngularPushVector(ship.getPosition()));
-
-		} else if (ring2.isInside(ship.getPosition().x, ship.getPosition().y)) {
-			ship.setColor(color(255, 255, 0));
-			ring2.modifyVelocity(ship.getPosition().x, ship.getPosition().y);
-
-			// PVector shipToCenter = new PVector(ring.getPosition().x -
-			// ship.getPosition().x, ring.getPosition().y -
-			// ship.getPosition().y);
-			// shipToCenter.normalize();
-			// shipToCenter.rotate(-PI);
-			// shipToCenter.mult(ring.getAngularVelocity() * 10);
-			// println(shipToCenter);
-			// ship.addForce(shipToCenter);
-			// line(ship.getPosition().x,
-			// ship.getPosition().y,ship.getPosition().x + shipToCenter.x,
-			// ship.getPosition().y + shipToCenter.y);
-			ship.addForce(ring2.getAngularPushVector(ship.getPosition()));
-
-		}else {
-			ship.setColor(color(0, 255, 255));
-			ship.addForce(new PVector(0, 0));
-		}
-
-		ring.render();
-		ring2.render();
-		ship.render();
+		//ring.render();
+		//ring2.render();
+		levelManager.render();
+		//ship.render();
 
 	}
 
@@ -106,9 +79,14 @@ public class Main extends PApplet {
 			ship.resetPosition();
 		}
 
-		if (key == 'l') {
+		if (key == 'c') {
+			Ship.applyCentrifugeForce = !Ship.applyCentrifugeForce;
 		}
 
+		if (key == 'l') {
+			loop();
+		}
+		
 		if (key == CODED) {
 			if (keyCode == UP) {
 			}

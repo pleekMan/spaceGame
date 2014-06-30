@@ -22,12 +22,13 @@ public class Ring {
 
 	float tunnelCenter;
 	float tunnelSpread;
+	boolean shipWentThrough;
 
 	PGraphics ringBuffer;
 	PImage ringImage;
 	PImage ringImageMask;
 
-	public Ring(float _x, float _y, int _color, float _inner,  float _outer) {
+	public Ring(float _x, float _y, int _color, float _inner, float _outer) {
 		p5 = getP5();
 
 		pos = new PVector(_x, _y);
@@ -36,11 +37,13 @@ public class Ring {
 		limitInner = _inner;
 		limitOuter = _outer;
 
-		tunnelCenter = 0f;
-		tunnelSpread = p5.TWO_PI * 0.1f;
+		tunnelCenter = p5.PI;
+		tunnelSpread = p5.TWO_PI * 0.05f;
+
+		shipWentThrough = false;
 
 		angularPos = 0;
-		angularVelMax = p5.TWO_PI * 0.01f;
+		angularVelMax = p5.TWO_PI * 0.005f;
 		multiplier = 1f;
 
 		ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter * 2);
@@ -51,7 +54,10 @@ public class Ring {
 	public void update() {
 
 		previousAngularPos = angularPos;
-		angularPos += angularVelMax * multiplier;
+
+		if(!(p5.abs(angularVelMax * multiplier) < 0.002f)){
+			angularPos += angularVelMax * multiplier;
+		}
 
 	}
 
@@ -119,50 +125,49 @@ public class Ring {
 
 	public void render2() {
 		/*
-		ringBuffer.beginDraw();
+		 * ringBuffer.beginDraw();
+		 * 
+		 * ringBuffer.pushMatrix();
+		 * 
+		 * ringBuffer.translate(pos.x, pos.y); ringBuffer.rotate(angularPos); //
+		 * angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
+		 * 
+		 * ringBuffer.background(0,0);
+		 * 
+		 * ringBuffer.pushStyle();
+		 * 
+		 * ringBuffer.strokeWeight(1);
+		 * 
+		 * ringBuffer.stroke(ringColor); ringBuffer.fill(ringColor, 50);
+		 * ringBuffer.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
+		 * 
+		 * ringBuffer.fill(0); ringBuffer.ellipse(0, 0, limitInner * 2,
+		 * limitInner * 2);
+		 * 
+		 * ringBuffer.line(limitInner, 0, limitOuter, 0);
+		 * 
+		 * // DRAW TUNNEL ringBuffer.strokeWeight(5); ringBuffer.arc(0, 0,
+		 * limitInner * 2, limitInner * 2, tunnelCenter - tunnelSpread,
+		 * tunnelCenter + tunnelSpread);
+		 * 
+		 * ringBuffer.popStyle();
+		 * 
+		 * ringBuffer.popMatrix();
+		 * 
+		 * ringBuffer.endDraw();
+		 * 
+		 * 
+		 * p5.imageMode(p5.CENTER); p5.image(ringBuffer, 0, 0);
+		 */
+		// //-------------
 
-		ringBuffer.pushMatrix();
-
-		ringBuffer.translate(pos.x, pos.y);
-		ringBuffer.rotate(angularPos);
-		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
-
-		ringBuffer.background(0,0);
-
-		ringBuffer.pushStyle();
-
-		ringBuffer.strokeWeight(1);
-
-		ringBuffer.stroke(ringColor);
-		ringBuffer.fill(ringColor, 50);
-		ringBuffer.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
-
-		ringBuffer.fill(0);
-		ringBuffer.ellipse(0, 0, limitInner * 2, limitInner * 2);
-
-		ringBuffer.line(limitInner, 0, limitOuter, 0);
-
-		// DRAW TUNNEL
-		ringBuffer.strokeWeight(5);
-		ringBuffer.arc(0, 0, limitInner * 2, limitInner * 2, tunnelCenter - tunnelSpread, tunnelCenter + tunnelSpread);
-
-		ringBuffer.popStyle();
-
-		ringBuffer.popMatrix();
-
-		ringBuffer.endDraw();
-
-		
-		p5.imageMode(p5.CENTER);
-		p5.image(ringBuffer, 0, 0);
-		*/
-		////-------------
-		
 		p5.pushMatrix();
 
 		p5.translate(pos.x, pos.y);
+		//p5.rotateX(p5.HALF_PI - 0.1f);
 		p5.rotate(angularPos);
-		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
+		angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
+		angularPos = angularPos < 0f ? p5.TWO_PI : angularPos;
 
 		p5.pushStyle();
 
@@ -172,23 +177,48 @@ public class Ring {
 		p5.fill(ringColor, 50);
 		p5.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
 
-		//p5.fill(0);
+		// p5.fill(0);
 		p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
 
 		p5.line(limitInner, 0, limitOuter, 0);
 
 		// DRAW TUNNEL
-		p5.strokeWeight(5);
-		p5.arc(0, 0, limitInner * 2, limitInner * 2, tunnelCenter - tunnelSpread, tunnelCenter + tunnelSpread);
+		if (isInTunnelLock()) {
+			p5.strokeWeight(7);
+		}
+		p5.strokeWeight(2);
+		p5.arc(0, 0, limitOuter * 2, limitOuter * 2, -tunnelSpread, tunnelSpread);
 
 		p5.popStyle();
 
 		p5.popMatrix();
-		
+
+		p5.text(angularPos, pos.x, pos.y - limitOuter);
+
+		showTunnelCenter();
+
 	}
 
 	public PVector getPosition() {
 		return pos;
+	}
+
+	private void showTunnelCenter() {
+
+		p5.pushMatrix();
+		p5.translate(pos.x, pos.y);
+
+		p5.rotate(tunnelCenter);
+		p5.strokeWeight(3);
+		p5.line(limitInner, 0, limitOuter, 0);
+
+		p5.rotate(tunnelSpread);
+		p5.line(limitInner, 0, limitOuter, 0);
+
+		p5.rotate(-tunnelSpread * 2);
+		p5.line(limitInner, 0, limitOuter, 0);
+
+		p5.popMatrix();
 	}
 
 	public boolean isInside(float x, float y) {
@@ -202,6 +232,17 @@ public class Ring {
 		}
 
 	}
+
+	public boolean isInTunnelLock() {
+		if (angularPos > (tunnelCenter - tunnelSpread) && angularPos < (tunnelCenter + tunnelSpread)) {
+			p5.fill(255, 100);
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
 
 	public void modifyVelocity(float x, float y) {
 
@@ -218,36 +259,34 @@ public class Ring {
 
 		PVector shipToCenter = new PVector(pos.x - inVector.x, pos.y - inVector.y);
 
-		System.out.println(shipToCenter);
+		// System.out.println(shipToCenter);
 
 		p5.stroke(0, 0, 255);
 		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
-		
-		/*
-		if (getAngularVelocity() < 0) {
-			shipToCenter.rotate(p5.HALF_PI);
-		} else {
-			shipToCenter.rotate(-p5.HALF_PI);
 
-		}
-		*/
+		/*
+		 * if (getAngularVelocity() < 0) { shipToCenter.rotate(p5.HALF_PI); }
+		 * else { shipToCenter.rotate(-p5.HALF_PI);
+		 * 
+		 * }
+		 */
 		shipToCenter.rotate(-p5.HALF_PI);
 
-		
 		p5.stroke(0, 255, 0);
 		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		shipToCenter.normalize();
 		float mg = p5.dist(inVector.x, inVector.y, pos.x, pos.y);
 		shipToCenter.mult(getAngularVelocity() * mg);
-		System.out.println("ShipToCenter: " + mg + " / AngVel: " + getAngularVelocity() + " / Result: " + getAngularVelocity() * mg);
+		// System.out.println("ShipToCenter: " + mg + " / AngVel: " +
+		// getAngularVelocity() + " / Result: " + getAngularVelocity() * mg);
 		p5.stroke(255, 0, 0);
 		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		return shipToCenter;
 	}
-	
-	public void setAngularVelocity(float vel){
+
+	public void setAngularVelocity(float vel) {
 		angularVelMax = vel;
 	}
 

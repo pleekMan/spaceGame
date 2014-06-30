@@ -8,6 +8,7 @@ public class Ship {
 
 	Main p5;
 
+	PVector accel;
 	PVector vel;
 	PVector pos;
 
@@ -17,6 +18,7 @@ public class Ship {
 
 	boolean controlled = false;
 	PVector externalForce;
+	public static boolean applyCentrifugeForce;
 
 	public Ship() {
 
@@ -24,12 +26,14 @@ public class Ship {
 
 		pos = new PVector(p5.width * 0.5f, p5.height - 10f);
 		vel = new PVector(0, 0);
+		accel = new PVector(0, 0);
 
 		size = 20f;
 		rotation = 0f;
 
 		shipColor = p5.color(150, 100, 100);
 		externalForce = new PVector(0, 0);
+		applyCentrifugeForce = true;
 
 	}
 
@@ -40,9 +44,16 @@ public class Ship {
 
 	public void update() {
 
+		if (!applyCentrifugeForce) {
+			vel.set(0, 0);
+		}
+		
 		maneuver();
-		vel.add(externalForce);
+		vel.add(accel);
+		// vel.add(externalForce);
 		pos.add(vel);
+
+		accel.set(0, 0);
 
 	}
 
@@ -63,6 +74,10 @@ public class Ship {
 	public PVector getPosition() {
 		return pos;
 	}
+	
+	public float getSize(){
+		return size;
+	}
 
 	public void setColor(int _color) {
 		shipColor = _color;
@@ -72,6 +87,9 @@ public class Ship {
 	public void addForce(PVector force) {
 		// force.mult(-1);
 		externalForce = force;
+		
+		externalForce.mult(1f);
+		accel.add(externalForce);
 	}
 
 	public void resetPosition() {

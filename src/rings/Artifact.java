@@ -1,0 +1,47 @@
+package rings;
+
+import processing.core.PVector;
+import globals.Main;
+import globals.PAppletSingleton;
+
+public class Artifact {
+
+	  Main p5;
+	  
+	  PVector pos;
+	  float size;	  
+	  
+
+	  public Artifact() {
+		  p5 = getP5();
+		  
+	    pos = new PVector(0,0);
+	    size = 30;
+	  }
+	  //x,y,img, umbral
+	  public void setup(float newX, float newY) {
+	    pos.x = newX;
+	    pos.y = newY;
+	  }
+
+	  public void render() {
+	    p5.ellipse(pos.x, pos.y, size, size);
+	    //p5.ellipse(0,0, size, size);
+
+	  }
+
+	  public boolean collidedWith(float _x, float _y) {
+	    float distancia = p5.dist(pos.x, pos.y, _x, _y);
+	    if (distancia < (size * 0.5f)) {
+	      return true;
+	    } else {
+	     return false; 
+	    }
+	  }
+	  
+	// P5 SINGLETON
+		protected Main getP5() {
+			return PAppletSingleton.getInstance().getP5Applet();
+		}
+	  
+}
