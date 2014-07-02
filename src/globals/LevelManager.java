@@ -22,13 +22,16 @@ public class LevelManager {
 	//boolean levelCompleted;
 
 	boolean isShipInsideRings = false;
+	
+	Timer timer;
 
 	public LevelManager() {
 		p5 = getP5();
 
 		rings = new ArrayList<Ring>();
 		artifacts = new ArrayList<Artifact>();
-
+		
+		
 	}
 
 	public void setup(int _rings, Ship _ship) {
@@ -39,12 +42,21 @@ public class LevelManager {
 
 		for (int i = 0; i < ringCount; i++) {
 			Ring actualRing;
-			actualRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, p5.color(0, 200, 200 - (100 * i)), 200f - (100 * i), 300f - (100 * i));
-			actualRing.setImage(p5.loadImage("image01.png"));
-			actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);
+			actualRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, i, p5.color(0, 200, 200 - (100 * i)), 200f - (100 * i), 300f - (100 * i));
+			//actualRing.setImage(p5.loadImage("image01.png"));
+			//actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);			
 			rings.add(actualRing);
 		}
-		rings.get(1).setAngularVelocity(-p5.TWO_PI * 0.01f);
+		
+		rings.get(0).setDiameters(400f, 250f);
+		rings.get(1).setDiameters(250f, 200f);
+		rings.get(2).setDiameters(200f, 100f);
+
+
+		rings.get(0).setAngularVelocity(p5.TWO_PI * 0.005f);
+		rings.get(1).setAngularVelocity(-p5.TWO_PI * 0.005f);
+		rings.get(2).setAngularVelocity(p5.TWO_PI * 0.01f);
+
 		
 		
 		for (int i = 0; i < artifactCount; i++) {
@@ -54,12 +66,27 @@ public class LevelManager {
 			artifacts.add(actualArtifact);
 		}
 		
+		artifacts.get(0).setPosition(250,700);
+		artifacts.get(1).setPosition(700,500);
+		artifacts.get(2).setPosition(370,350);
+		artifacts.get(3).setPosition(500,300);
+		artifacts.get(4).setPosition(780,350);
+		
+		artifacts.get(0).setType(1);
+		artifacts.get(1).setType(1);
+		artifacts.get(2).setType(0);
+		artifacts.get(3).setType(1);
+		artifacts.get(4).setType(0);
 
+		timer = new Timer();
+		timer.setDuration(30000);
+		timer.start();
 
 	}
 
 	public void update() {
 
+				
 		// RING MOTION - BEGIN --------------------
 		isShipInsideRings = false;
 
@@ -96,14 +123,26 @@ public class LevelManager {
 		for (int i = 0; i < artifacts.size(); i++) {
 			
 			if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
-				p5.noFill();
-				p5.stroke(255,0,0);
-				p5.line(0, 0, p5.width, p5.height);
-				p5.line(p5.width, 0, 0, p5.height);
-				p5.noLoop();
+				if (artifacts.get(i).getType() == 0) {
+					p5.noFill();
+					p5.stroke(255,0,0);
+					p5.line(0, 0, p5.width, p5.height);
+					p5.line(p5.width, 0, 0, p5.height);
+					p5.noLoop();
+				} else {
+					ship.addForce(new PVector(p5.random(-20, 20), p5.random(-20,20)));
+				}
+				
 			}
 		}
 		
+		// DRAW FINNISH LINE
+		p5.noFill();
+		p5.stroke(255);
+		p5.pushMatrix();
+		p5.translate(0, 0, 20);
+		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, 200,200);
+		p5.popMatrix();
 		checkFinish();
 		
 
@@ -116,16 +155,27 @@ public class LevelManager {
 			currentRing.render2();
 		}
 		
+		// DRAW EVERYTHING OVER THE RINGS
+		p5.hint(p5.DISABLE_DEPTH_TEST);
+
 		for (int i = 0; i < artifacts.size(); i++) {
 			artifacts.get(i).render();
 		}
 
 		ship.render();
+		p5.hint(p5.ENABLE_DEPTH_TEST);
 		
 		// DRAW FINISH ZONE
 		p5.noFill();
 		p5.stroke(127);
 		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, ship.getSize(), ship.getSize());
+	}
+	
+	public void render2D(){
+		timer.update();
+		timer.render();
+		
+		ship.render2D();
 	}
 
 	public void setShip(Ship _ship) {

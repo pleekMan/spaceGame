@@ -28,22 +28,22 @@ public class Ring {
 	PImage ringImage;
 	PImage ringImageMask;
 
-	public Ring(float _x, float _y, int _color, float _inner, float _outer) {
+	public Ring(float _x, float _y, float zDisplace, int _color, float _inner, float _outer) {
 		p5 = getP5();
 
-		pos = new PVector(_x, _y);
+		pos = new PVector(_x, _y, zDisplace);
 		ringColor = p5.color(_color);
 
 		limitInner = _inner;
 		limitOuter = _outer;
 
 		tunnelCenter = p5.PI;
-		tunnelSpread = p5.TWO_PI * 0.05f;
+		tunnelSpread = p5.TWO_PI * 0.03f;
 
 		shipWentThrough = false;
 
 		angularPos = 0;
-		angularVelMax = p5.TWO_PI * 0.005f;
+		angularVelMax = p5.TWO_PI * 0.01f;
 		multiplier = 1f;
 
 		ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter * 2);
@@ -163,7 +163,7 @@ public class Ring {
 
 		p5.pushMatrix();
 
-		p5.translate(pos.x, pos.y);
+		p5.translate(pos.x, pos.y, pos.z);
 		//p5.rotateX(p5.HALF_PI - 0.1f);
 		p5.rotate(angularPos);
 		angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
@@ -171,29 +171,33 @@ public class Ring {
 
 		p5.pushStyle();
 
+		// RING
 		p5.strokeWeight(1);
-
 		p5.stroke(ringColor);
 		p5.fill(ringColor, 50);
 		p5.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
 
 		// p5.fill(0);
-		p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
+		//p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
 
-		p5.line(limitInner, 0, limitOuter, 0);
+		//p5.line(limitInner, 0, limitOuter, 0);
 
 		// DRAW TUNNEL
 		if (isInTunnelLock()) {
-			p5.strokeWeight(7);
+			p5.strokeWeight(3);
 		}
-		p5.strokeWeight(2);
-		p5.arc(0, 0, limitOuter * 2, limitOuter * 2, -tunnelSpread, tunnelSpread);
+		//p5.strokeWeight(1);
+		p5.noFill();
+		for (float i = 0; i < 1.0f ; i+=0.1f) {
+			float distance = limitInner + ((limitOuter - limitInner) * i);
+			p5.arc(0, 0, distance * 2, distance * 2, -tunnelSpread, tunnelSpread);
+		}
 
 		p5.popStyle();
 
 		p5.popMatrix();
 
-		p5.text(angularPos, pos.x, pos.y - limitOuter);
+		//p5.text(angularPos, pos.x, pos.y - limitOuter);
 
 		showTunnelCenter();
 
@@ -205,6 +209,8 @@ public class Ring {
 
 	private void showTunnelCenter() {
 
+		p5.stroke(255,0,0);
+		
 		p5.pushMatrix();
 		p5.translate(pos.x, pos.y);
 
@@ -284,6 +290,11 @@ public class Ring {
 		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		return shipToCenter;
+	}
+	
+	public void setDiameters(float outer, float inner){
+		limitOuter = outer;
+		limitInner = inner;
 	}
 
 	public void setAngularVelocity(float vel) {

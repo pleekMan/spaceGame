@@ -6,42 +6,60 @@ import globals.PAppletSingleton;
 
 public class Artifact {
 
-	  Main p5;
-	  
-	  PVector pos;
-	  float size;	  
-	  
+	Main p5;
 
-	  public Artifact() {
-		  p5 = getP5();
-		  
-	    pos = new PVector(0,0);
-	    size = 30;
-	  }
-	  //x,y,img, umbral
-	  public void setup(float newX, float newY) {
-	    pos.x = newX;
-	    pos.y = newY;
-	  }
+	PVector pos;
+	float size;
+	int type;
 
-	  public void render() {
-	    p5.ellipse(pos.x, pos.y, size, size);
-	    //p5.ellipse(0,0, size, size);
+	public Artifact() {
+		p5 = getP5();
 
-	  }
+		pos = new PVector(0, 0);
+		size = 30;
+	}
 
-	  public boolean collidedWith(float _x, float _y) {
-	    float distancia = p5.dist(pos.x, pos.y, _x, _y);
-	    if (distancia < (size * 0.5f)) {
-	      return true;
-	    } else {
-	     return false; 
-	    }
-	  }
-	  
-	// P5 SINGLETON
-		protected Main getP5() {
-			return PAppletSingleton.getInstance().getP5Applet();
+	// x,y,img, umbral
+	public void setup(float newX, float newY) {
+		pos.x = newX;
+		pos.y = newY;
+	}
+
+	public void render() {
+		if (type == 0) {
+			p5.line(pos.x - (size * 0.5f), pos.y - (size * 0.5f), pos.x + (size * 0.5f), pos.y + (size * 0.5f));
+			p5.line(pos.x + (size * 0.5f), pos.y - (size * 0.5f), pos.x - (size * 0.5f), pos.y + (size * 0.5f));
+		} else {
+			p5.ellipse(pos.x, pos.y, size, size);
+			// p5.ellipse(0,0, size, size);
 		}
-	  
+	}
+
+	public boolean collidedWith(float _x, float _y) {
+		float distancia = p5.dist(pos.x, pos.y, _x, _y);
+		if (distancia < (size)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setPosition(int _x, int _y) {
+		pos.x = _x;
+		pos.y = _y;
+	}
+
+	public void setType(int _type) {
+		type = _type;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	// P5 SINGLETON
+	protected Main getP5() {
+		return PAppletSingleton.getInstance().getP5Applet();
+	}
+
 }

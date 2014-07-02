@@ -7,11 +7,13 @@ import ships.Ship;
 public class Main extends PApplet {
 
 	Ship ship;
-	//Ring ring;
-	//Ring ring2;
 
 	LevelManager levelManager;
-	
+
+	PImage backImage;
+
+	boolean draw3D;
+
 	public void setup() {
 
 		setPAppletSingleton();
@@ -21,20 +23,14 @@ public class Main extends PApplet {
 		smooth();
 
 		ship = new Ship();
-		
+
 		levelManager = new LevelManager();
-		levelManager.setup(2, ship);
-		
-		//ring = new Ring(width * 0.5f, height * 0.5f, color(0, 200, 200), 200f, 300f);
-		//ring.setImage(loadImage("image01.png"));
-		//ring.setAngularVelocity(TWO_PI * 0.01f);
-		
-		//ring2 = new Ring(width * 0.5f, height * 0.5f, color(200, 0, 200), 100f, 200f);
-		//ring2.setImage(loadImage("image01.png"));
-		//ring.setAngularVelocity(-(TWO_PI * 0.005f));
-		
-		
-		
+		levelManager.setup(3, ship);
+
+		draw3D = false;
+
+		backImage = loadImage("fondo.png");
+
 	}
 
 	public static void main(String args[]) {
@@ -48,29 +44,37 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		background(0);
+		background(25,25,50);
 		
-		text("FR: " + frameRate, 20,20);
-
-		strokeWeight(1);
-		stroke(127,50);
-		for (int i = 0; i < width; i += 20) {
-			line(i, 0, i, height);
+		// DOTTED BACKGROUND
+		stroke(200);
+		for (int y = 0; y < height; y += 20) {
+			for (int x = 0; x < width; x += 20) {
+				point(x,y);
+			}
 		}
 
-		//ring.update();
-		//ring2.update();
-		
+		if (draw3D) {
+			pushMatrix();
+			translate(0, 0, -200);
+			rotateX(QUARTER_PI);
+		}
+
 		levelManager.update();
-		//ship.update();
-		// ship.maneuver();
-
-		
-
-		//ring.render();
-		//ring2.render();
 		levelManager.render();
-		//ship.render();
+
+		if (draw3D) {
+			popMatrix();
+
+		}
+
+		levelManager.render2D();
+
+		hint(DISABLE_DEPTH_TEST);
+		fill(255);
+		// text("FR: " + frameRate, 20, 20);
+		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
+		hint(ENABLE_DEPTH_TEST);
 
 	}
 
@@ -86,7 +90,11 @@ public class Main extends PApplet {
 		if (key == 'l') {
 			loop();
 		}
-		
+
+		if (key == '3') {
+			draw3D = !draw3D;
+		}
+
 		if (key == CODED) {
 			if (keyCode == UP) {
 			}

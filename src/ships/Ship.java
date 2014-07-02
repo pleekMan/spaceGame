@@ -20,6 +20,11 @@ public class Ship {
 	PVector externalForce;
 	public static boolean applyCentrifugeForce;
 
+	// CONTROLLER GUI
+	float controlX;
+	float controlY;
+	float maxRadius;
+
 	public Ship() {
 
 		p5 = getP5();
@@ -35,11 +40,10 @@ public class Ship {
 		externalForce = new PVector(0, 0);
 		applyCentrifugeForce = true;
 
-	}
+		controlX = 850;
+		controlY = 880;
+		maxRadius = 150;
 
-	// P5 SINGLETON
-	protected Main getP5() {
-		return PAppletSingleton.getInstance().getP5Applet();
 	}
 
 	public void update() {
@@ -47,7 +51,7 @@ public class Ship {
 		if (!applyCentrifugeForce) {
 			vel.set(0, 0);
 		}
-		
+
 		maneuver();
 		vel.add(accel);
 		// vel.add(externalForce);
@@ -71,11 +75,28 @@ public class Ship {
 
 	}
 
+	public void render2D() {
+		// RENDER CONTROLLER GUI
+
+		p5.noFill();
+		for (float i = 1; i > 0; i -= 0.1f) {
+			p5.stroke(200,200 - (200 * i));
+			p5.ellipse(controlX, controlY, maxRadius * (i), maxRadius * (i));
+		}
+		
+		if (controlled) {
+			p5.line(controlX, controlY, p5.mouseX, p5.mouseY);
+		}
+	}
+
 	public PVector getPosition() {
 		return pos;
 	}
-	
-	public float getSize(){
+	public PVector getVelocity() {
+		return vel;
+	}
+
+	public float getSize() {
 		return size;
 	}
 
@@ -87,7 +108,7 @@ public class Ship {
 	public void addForce(PVector force) {
 		// force.mult(-1);
 		externalForce = force;
-		
+
 		externalForce.mult(1f);
 		accel.add(externalForce);
 	}
@@ -100,35 +121,47 @@ public class Ship {
 	private void maneuver() {
 		if (controlled) {
 			// p5.println("Vectoring Ship");
-			vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height * 0.5f));
+
+			vel.x = p5.mouseX - controlX;
+			vel.y = p5.mouseY - controlY;
+
+			// vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height *
+			// 0.5f));
 			vel.mult(0.1f);
-			p5.stroke(255, 255, 0);
-			p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
+			//p5.stroke(255, 255, 0);
+			//p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
 		}
 	}
 
 	public void onMouseDragged() {
-
+		/*
 		vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height * 0.5f));
 		vel.mult(0.1f);
 		p5.stroke(255, 255, 0);
 		p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
+		*/
 	}
 
 	public void onMousePressed() {
+		
 		controlled = true;
-		p5.println("onMP");
+		//p5.println("onMP");
 
 	}
 
 	public void onMouseReleased() {
 		controlled = false;
-		p5.println("onMR");
+		//p5.println("onMR");
 
 	}
 
 	public void onMouseMoved() {
-		p5.println("onMM");
+		//p5.println("onMM");
+	}
+
+	// P5 SINGLETON
+	protected Main getP5() {
+		return PAppletSingleton.getInstance().getP5Applet();
 	}
 
 }
