@@ -27,6 +27,7 @@ public class Ring {
 	PGraphics ringBuffer;
 	PImage ringImage;
 	PImage ringImageMask;
+	public static float maxDiametrAllRings;
 
 	public Ring(float _x, float _y, float zDisplace, int _color, float _inner, float _outer) {
 		p5 = getP5();
@@ -36,6 +37,8 @@ public class Ring {
 
 		limitInner = _inner;
 		limitOuter = _outer;
+		
+		maxDiametrAllRings = 10; // PONELE
 
 		tunnelCenter = p5.PI;
 		tunnelSpread = p5.TWO_PI * 0.03f;
@@ -45,8 +48,9 @@ public class Ring {
 		angularPos = 0;
 		angularVelMax = p5.TWO_PI * 0.01f;
 		multiplier = 1f;
-
-		ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter * 2);
+		
+		//createRingBuffer();
+		//ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter * 2);
 		// ringBuffer.mask(createRingMask());
 
 	}
@@ -54,14 +58,15 @@ public class Ring {
 	public void update() {
 
 		previousAngularPos = angularPos;
-
+		
+		// COMPLETELY STOPPING THE ROTATION
 		if(!(p5.abs(angularVelMax * multiplier) < 0.002f)){
 			angularPos += angularVelMax * multiplier;
 		}
 
 	}
 
-	public void render() {
+	public void renderImageMode() {
 
 		// RING BUFFER DRAW - BEGIN
 		ringBuffer.beginDraw();
@@ -123,7 +128,7 @@ public class Ring {
 
 	}
 
-	public void render2() {
+	public void renderOutlineMode() {
 		/*
 		 * ringBuffer.beginDraw();
 		 * 
@@ -174,8 +179,9 @@ public class Ring {
 		// RING
 		p5.strokeWeight(1);
 		p5.stroke(ringColor);
-		p5.fill(ringColor, 50);
-		p5.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
+		//p5.fill(ringColor, 50);
+		p5.noFill();
+		p5.ellipse(0, 0, limitOuter, limitOuter);
 
 		// p5.fill(0);
 		//p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
@@ -189,8 +195,8 @@ public class Ring {
 		//p5.strokeWeight(1);
 		p5.noFill();
 		for (float i = 0; i < 1.0f ; i+=0.1f) {
-			float distance = limitInner + ((limitOuter - limitInner) * i);
-			p5.arc(0, 0, distance * 2, distance * 2, -tunnelSpread, tunnelSpread);
+			float distance = (limitInner + ((limitOuter - limitInner)) * i);
+			p5.arc(0, 0, distance, distance, -tunnelSpread, tunnelSpread);
 		}
 
 		p5.popStyle();
@@ -216,13 +222,13 @@ public class Ring {
 
 		p5.rotate(tunnelCenter);
 		p5.strokeWeight(3);
-		p5.line(limitInner, 0, limitOuter, 0);
+		p5.line(limitInner * 0.5f, 0, limitOuter * 0.5f, 0);
 
 		p5.rotate(tunnelSpread);
-		p5.line(limitInner, 0, limitOuter, 0);
+		p5.line(limitInner * 0.5f , 0, limitOuter * 0.5f, 0);
 
 		p5.rotate(-tunnelSpread * 2);
-		p5.line(limitInner, 0, limitOuter, 0);
+		p5.line(limitInner * 0.5f, 0, limitOuter * 0.5f, 0);
 
 		p5.popMatrix();
 	}
@@ -231,7 +237,7 @@ public class Ring {
 
 		float distance = p5.dist(pos.x, pos.y, x, y);
 
-		if (distance < limitOuter && distance > limitInner) {
+		if (distance < (limitOuter * 0.5f) && distance > (limitInner * 0.5f)) {
 			return true;
 		} else {
 			return false;
@@ -253,7 +259,7 @@ public class Ring {
 	public void modifyVelocity(float x, float y) {
 
 		float distance = p5.dist(pos.x, pos.y, x, y);
-		multiplier = p5.norm(distance, limitInner, limitOuter);
+		multiplier = p5.norm(distance, limitInner * 0.5f, limitOuter * 0.5f);
 
 	}
 
@@ -292,9 +298,17 @@ public class Ring {
 		return shipToCenter;
 	}
 	
-	public void setDiameters(float outer, float inner){
+	public float getDiameter(){
+		return limitOuter;
+	}
+	
+	public void setDiameter(float outer, float inner){
 		limitOuter = outer;
 		limitInner = inner;
+	}
+	
+	public static void setMaxDiameterAllRings(float _maxDiameter){
+		maxDiametrAllRings = _maxDiameter;
 	}
 
 	public void setAngularVelocity(float vel) {
@@ -303,6 +317,9 @@ public class Ring {
 
 	public void setImage(PImage _image) {
 		ringImage = _image;
+		
+		ringBuffer = p5.createGraphics((int) maxDiametrAllRings, (int) maxDiametrAllRings);
+
 
 		createRingMask(ringImage);
 	}
@@ -312,11 +329,13 @@ public class Ring {
 		mask.beginDraw();
 		mask.background(0);
 		mask.fill(255);
-		mask.ellipse(mask.width * 0.5f, mask.height * 0.5f, mask.width, mask.height);
+		mask.ellipse(mask.width * 0.5f, mask.height * 0.5f, limitOuter, limitOuter);
+		mask.fill(0);
+		mask.ellipse( mask.width * 0.5f, mask.height * 0.5f, limitInner, limitInner);
 		mask.endDraw();
 
 		_image.mask(mask);
-
+		//ringBuffer.mask(mask);
 	}
 
 	// P5 SINGLETON

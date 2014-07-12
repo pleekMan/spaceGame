@@ -6,6 +6,7 @@ import ships.Ship;
 
 import java.util.ArrayList;
 
+import processing.core.PImage;
 import processing.core.PVector;
 
 public class LevelManager {
@@ -43,14 +44,25 @@ public class LevelManager {
 		for (int i = 0; i < ringCount; i++) {
 			Ring actualRing;
 			actualRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, i, p5.color(0, 200, 200 - (100 * i)), 200f - (100 * i), 300f - (100 * i));
-			//actualRing.setImage(p5.loadImage("image01.png"));
+			//actualRing.setImage(p5.loadImage("obraProxy.png"));
 			//actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);			
 			rings.add(actualRing);
 		}
 		
-		rings.get(0).setDiameters(400f, 250f);
-		rings.get(1).setDiameters(250f, 200f);
-		rings.get(2).setDiameters(200f, 100f);
+		rings.get(0).setDiameter(800f, 500f);
+		rings.get(1).setDiameter(500f, 400f);
+		rings.get(2).setDiameter(400f, 200f);
+		
+		Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
+		
+		for (int i = 0; i < rings.size(); i++) {
+			PImage imagenObra = p5.loadImage("gameOfCells.jpg");
+			rings.get(i).setImage(imagenObra);
+
+		}
+		//rings.get(0).setImage(imagenObra);
+		//rings.get(1).setImage(imagenObra);
+		//rings.get(2).setImage(imagenObra);
 
 
 		rings.get(0).setAngularVelocity(p5.TWO_PI * 0.005f);
@@ -120,6 +132,8 @@ public class LevelManager {
 		
 		ship.update();
 		
+		// ARTIFACTS - BEGIN
+		/*
 		for (int i = 0; i < artifacts.size(); i++) {
 			
 			if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
@@ -135,6 +149,9 @@ public class LevelManager {
 				
 			}
 		}
+		*/
+		// ARTIFACTS - END
+
 		
 		// DRAW FINNISH LINE
 		p5.noFill();
@@ -150,13 +167,21 @@ public class LevelManager {
 
 	public void render() {
 
+		p5.hint(p5.DISABLE_DEPTH_TEST);
+
+		
 		for (int i = 0; i < rings.size(); i++) {
 			Ring currentRing = rings.get(i);
-			currentRing.render2();
+			currentRing.renderImageMode();
+			currentRing.renderOutlineMode();
 		}
 		
+		
+		//rings.get(1).render();
+		//rings.get(1).render2();
+		
 		// DRAW EVERYTHING OVER THE RINGS
-		p5.hint(p5.DISABLE_DEPTH_TEST);
+		//p5.hint(p5.DISABLE_DEPTH_TEST);
 
 		for (int i = 0; i < artifacts.size(); i++) {
 			artifacts.get(i).render();

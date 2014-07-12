@@ -35,7 +35,7 @@ public class Main extends PApplet {
 
 	public static void main(String args[]) {
 		PApplet.main(new String[] { Main.class.getName() });
-		// PApplet.main(new String[] { "--present", Main.class.getName() }); //
+		//PApplet.main(new String[] { "--present", Main.class.getName() }); //
 		// PRESENT MODE
 	}
 
@@ -74,6 +74,8 @@ public class Main extends PApplet {
 		fill(255);
 		// text("FR: " + frameRate, 20, 20);
 		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
+		
+		text("FR: " + frameRate, 20, 20);
 		hint(ENABLE_DEPTH_TEST);
 
 	}

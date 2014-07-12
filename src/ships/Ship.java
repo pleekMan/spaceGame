@@ -20,10 +20,8 @@ public class Ship {
 	PVector externalForce;
 	public static boolean applyCentrifugeForce;
 
-	// CONTROLLER GUI
-	float controlX;
-	float controlY;
-	float maxRadius;
+	ShipController shipControl;
+
 
 	public Ship() {
 
@@ -38,27 +36,28 @@ public class Ship {
 
 		shipColor = p5.color(150, 100, 100);
 		externalForce = new PVector(0, 0);
-		applyCentrifugeForce = true;
+		applyCentrifugeForce = false;
 
-		controlX = 850;
-		controlY = 880;
-		maxRadius = 150;
+		shipControl = new ShipController();
+		shipControl.setPosition(850, 880);
 
 	}
 
 	public void update() {
 
 		if (!applyCentrifugeForce) {
-			vel.set(0, 0);
+			//vel.set(0, 0);
+			vel.mult(0.5f);
 		}
-
+		
+		//accel.mult(0.9f);
 		maneuver();
 		vel.add(accel);
 		// vel.add(externalForce);
 		pos.add(vel);
 
-		accel.set(0, 0);
-
+		//accel.set(0, 0);
+		accel.mult(0.9f);
 	}
 
 	public void render() {
@@ -76,17 +75,9 @@ public class Ship {
 	}
 
 	public void render2D() {
-		// RENDER CONTROLLER GUI
-
-		p5.noFill();
-		for (float i = 1; i > 0; i -= 0.1f) {
-			p5.stroke(200,200 - (200 * i));
-			p5.ellipse(controlX, controlY, maxRadius * (i), maxRadius * (i));
-		}
 		
-		if (controlled) {
-			p5.line(controlX, controlY, p5.mouseX, p5.mouseY);
-		}
+		shipControl.render();
+
 	}
 
 	public PVector getPosition() {
@@ -109,7 +100,7 @@ public class Ship {
 		// force.mult(-1);
 		externalForce = force;
 
-		externalForce.mult(1f);
+		externalForce.mult(0.1f);
 		accel.add(externalForce);
 	}
 
@@ -121,15 +112,13 @@ public class Ship {
 	private void maneuver() {
 		if (controlled) {
 			// p5.println("Vectoring Ship");
-
-			vel.x = p5.mouseX - controlX;
-			vel.y = p5.mouseY - controlY;
-
-			// vel.set(p5.mouseX - (p5.width * 0.5f), p5.mouseY - (p5.height *
-			// 0.5f));
+			
+			vel.set(shipControl.getForce());
 			vel.mult(0.1f);
-			//p5.stroke(255, 255, 0);
-			//p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
+			
+			//accel.set(shipControl.getForce());
+			//accel.mult(0.1f);
+			
 		}
 	}
 
