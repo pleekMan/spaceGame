@@ -18,7 +18,7 @@ public class ShipController {
 		center = new PVector();
 		force = new PVector();
 		maxRadius = 150;
-		attenuator = 1.0f;
+		attenuator = 0.5f;
 	}
 
 	public void render() {

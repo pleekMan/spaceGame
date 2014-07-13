@@ -2,6 +2,7 @@ package rings;
 
 import java.awt.Image;
 
+import de.looksgood.ani.Ani;
 import globals.Main;
 import globals.PAppletSingleton;
 import processing.core.PGraphics;
@@ -11,6 +12,8 @@ import processing.core.PVector;
 public class Ring {
 
 	Main p5;
+	Ani ani;
+
 	PVector pos;
 	float angularPos;
 	float previousAngularPos;
@@ -27,7 +30,9 @@ public class Ring {
 	PGraphics ringBuffer;
 	PImage ringImage;
 	PImage ringImageMask;
-	public static float maxDiametrAllRings;
+	public static float maxDiameterAllRings;
+
+	boolean enableMotion;
 
 	public Ring(float _x, float _y, float zDisplace, int _color, float _inner, float _outer) {
 		p5 = getP5();
@@ -37,8 +42,8 @@ public class Ring {
 
 		limitInner = _inner;
 		limitOuter = _outer;
-		
-		maxDiametrAllRings = 10; // PONELE
+
+		maxDiameterAllRings = 10; // PONELE
 
 		tunnelCenter = p5.PI;
 		tunnelSpread = p5.TWO_PI * 0.03f;
@@ -48,20 +53,25 @@ public class Ring {
 		angularPos = 0;
 		angularVelMax = p5.TWO_PI * 0.01f;
 		multiplier = 1f;
-		
-		//createRingBuffer();
-		//ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter * 2);
+
+		enableMotion = true;
+
+		// createRingBuffer();
+		// ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter
+		// * 2);
 		// ringBuffer.mask(createRingMask());
 
 	}
 
 	public void update() {
 
-		previousAngularPos = angularPos;
-		
-		// COMPLETELY STOPPING THE ROTATION
-		if(!(p5.abs(angularVelMax * multiplier) < 0.002f)){
-			angularPos += angularVelMax * multiplier;
+		if (enableMotion) {
+			previousAngularPos = angularPos;
+
+			// COMPLETELY STOPPING THE ROTATION
+			if (!(p5.abs(angularVelMax * multiplier) < 0.002f)) {
+				angularPos += angularVelMax * multiplier;
+			}
 		}
 
 	}
@@ -80,6 +90,7 @@ public class Ring {
 		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 10);
 		ringBuffer.tint(255, 255, 255, alpha);
 		ringBuffer.imageMode(p5.CENTER);
+		ringBuffer.rotate(p5.PI);
 		ringBuffer.image(ringImage, 0, 0, ringBuffer.width, ringBuffer.height);
 
 		ringBuffer.popMatrix();
@@ -94,33 +105,6 @@ public class Ring {
 		// p5.rotate(angularPos);
 		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
 
-		/*
-		 * ringBuffer.beginDraw(); ringBuffer.background(0,0);
-		 * 
-		 * ringBuffer.pushStyle();
-		 * 
-		 * ringBuffer.image(ringImage, 0, 0, ringBuffer.width,
-		 * ringBuffer.height);
-		 * 
-		 * ringBuffer.strokeWeight(1);
-		 * 
-		 * ringBuffer.stroke(ringColor); ringBuffer.fill(ringColor, 50);
-		 * ringBuffer.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
-		 * 
-		 * ringBuffer.fill(0); ringBuffer.ellipse(0, 0, limitInner * 2,
-		 * limitInner * 2);
-		 * 
-		 * ringBuffer.line(limitInner, 0, limitOuter, 0);
-		 * 
-		 * // DRAW TUNNEL ringBuffer.strokeWeight(5); ringBuffer.arc(0, 0,
-		 * limitInner * 2, limitInner * 2, tunnelCenter - tunnelSpread,
-		 * tunnelCenter + tunnelSpread);
-		 * 
-		 * ringBuffer.popStyle();
-		 * 
-		 * ringBuffer.endDraw();
-		 */
-
 		p5.imageMode(p5.CENTER);
 		p5.image(ringBuffer, 0, 0);
 
@@ -129,47 +113,11 @@ public class Ring {
 	}
 
 	public void renderOutlineMode() {
-		/*
-		 * ringBuffer.beginDraw();
-		 * 
-		 * ringBuffer.pushMatrix();
-		 * 
-		 * ringBuffer.translate(pos.x, pos.y); ringBuffer.rotate(angularPos); //
-		 * angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
-		 * 
-		 * ringBuffer.background(0,0);
-		 * 
-		 * ringBuffer.pushStyle();
-		 * 
-		 * ringBuffer.strokeWeight(1);
-		 * 
-		 * ringBuffer.stroke(ringColor); ringBuffer.fill(ringColor, 50);
-		 * ringBuffer.ellipse(0, 0, limitOuter * 2, limitOuter * 2);
-		 * 
-		 * ringBuffer.fill(0); ringBuffer.ellipse(0, 0, limitInner * 2,
-		 * limitInner * 2);
-		 * 
-		 * ringBuffer.line(limitInner, 0, limitOuter, 0);
-		 * 
-		 * // DRAW TUNNEL ringBuffer.strokeWeight(5); ringBuffer.arc(0, 0,
-		 * limitInner * 2, limitInner * 2, tunnelCenter - tunnelSpread,
-		 * tunnelCenter + tunnelSpread);
-		 * 
-		 * ringBuffer.popStyle();
-		 * 
-		 * ringBuffer.popMatrix();
-		 * 
-		 * ringBuffer.endDraw();
-		 * 
-		 * 
-		 * p5.imageMode(p5.CENTER); p5.image(ringBuffer, 0, 0);
-		 */
-		// //-------------
 
 		p5.pushMatrix();
 
 		p5.translate(pos.x, pos.y, pos.z);
-		//p5.rotateX(p5.HALF_PI - 0.1f);
+		// p5.rotateX(p5.HALF_PI - 0.1f);
 		p5.rotate(angularPos);
 		angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
 		angularPos = angularPos < 0f ? p5.TWO_PI : angularPos;
@@ -179,22 +127,22 @@ public class Ring {
 		// RING
 		p5.strokeWeight(1);
 		p5.stroke(ringColor);
-		//p5.fill(ringColor, 50);
+		// p5.fill(ringColor, 50);
 		p5.noFill();
 		p5.ellipse(0, 0, limitOuter, limitOuter);
 
 		// p5.fill(0);
-		//p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
+		// p5.ellipse(0, 0, limitInner * 2, limitInner * 2);
 
-		//p5.line(limitInner, 0, limitOuter, 0);
+		// p5.line(limitInner, 0, limitOuter, 0);
 
 		// DRAW TUNNEL
 		if (isInTunnelLock()) {
 			p5.strokeWeight(3);
 		}
-		//p5.strokeWeight(1);
+		// p5.strokeWeight(1);
 		p5.noFill();
-		for (float i = 0; i < 1.0f ; i+=0.1f) {
+		for (float i = 0; i < 1.0f; i += 0.1f) {
 			float distance = (limitInner + ((limitOuter - limitInner)) * i);
 			p5.arc(0, 0, distance, distance, -tunnelSpread, tunnelSpread);
 		}
@@ -203,7 +151,7 @@ public class Ring {
 
 		p5.popMatrix();
 
-		//p5.text(angularPos, pos.x, pos.y - limitOuter);
+		// p5.text(angularPos, pos.x, pos.y - limitOuter);
 
 		showTunnelCenter();
 
@@ -215,8 +163,8 @@ public class Ring {
 
 	private void showTunnelCenter() {
 
-		p5.stroke(255,0,0);
-		
+		p5.stroke(255, 0, 0);
+
 		p5.pushMatrix();
 		p5.translate(pos.x, pos.y);
 
@@ -225,7 +173,7 @@ public class Ring {
 		p5.line(limitInner * 0.5f, 0, limitOuter * 0.5f, 0);
 
 		p5.rotate(tunnelSpread);
-		p5.line(limitInner * 0.5f , 0, limitOuter * 0.5f, 0);
+		p5.line(limitInner * 0.5f, 0, limitOuter * 0.5f, 0);
 
 		p5.rotate(-tunnelSpread * 2);
 		p5.line(limitInner * 0.5f, 0, limitOuter * 0.5f, 0);
@@ -244,6 +192,18 @@ public class Ring {
 		}
 
 	}
+	
+	public boolean isInside(PVector inPos) {
+
+		float distance = p5.dist(pos.x, pos.y, inPos.x, inPos.y);
+
+		if (distance < (limitOuter * 0.5f) && distance > (limitInner * 0.5f)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 
 	public boolean isInTunnelLock() {
 		if (angularPos > (tunnelCenter - tunnelSpread) && angularPos < (tunnelCenter + tunnelSpread)) {
@@ -254,7 +214,6 @@ public class Ring {
 		}
 
 	}
-
 
 	public void modifyVelocity(float x, float y) {
 
@@ -297,18 +256,18 @@ public class Ring {
 
 		return shipToCenter;
 	}
-	
-	public float getDiameter(){
+
+	public float getDiameter() {
 		return limitOuter;
 	}
-	
-	public void setDiameter(float outer, float inner){
+
+	public void setDiameter(float outer, float inner) {
 		limitOuter = outer;
 		limitInner = inner;
 	}
-	
-	public static void setMaxDiameterAllRings(float _maxDiameter){
-		maxDiametrAllRings = _maxDiameter;
+
+	public static void setMaxDiameterAllRings(float _maxDiameter) {
+		maxDiameterAllRings = _maxDiameter;
 	}
 
 	public void setAngularVelocity(float vel) {
@@ -317,9 +276,8 @@ public class Ring {
 
 	public void setImage(PImage _image) {
 		ringImage = _image;
-		
-		ringBuffer = p5.createGraphics((int) maxDiametrAllRings, (int) maxDiametrAllRings);
 
+		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings);
 
 		createRingMask(ringImage);
 	}
@@ -331,16 +289,26 @@ public class Ring {
 		mask.fill(255);
 		mask.ellipse(mask.width * 0.5f, mask.height * 0.5f, limitOuter, limitOuter);
 		mask.fill(0);
-		mask.ellipse( mask.width * 0.5f, mask.height * 0.5f, limitInner, limitInner);
+		mask.ellipse(mask.width * 0.5f, mask.height * 0.5f, limitInner, limitInner);
 		mask.endDraw();
 
 		_image.mask(mask);
-		//ringBuffer.mask(mask);
+		// ringBuffer.mask(mask);
+	}
+
+	public void correctToFinalRotation() {
+		enableMotion = false;
+		//previousAngularPos = angularPos;
+		ani.to(this, 1.0f, "angularPos", tunnelCenter);
 	}
 
 	// P5 SINGLETON
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
+	}
+
+	public void setAniTool(Ani _ani) {
+		ani = _ani;
 	}
 
 }

@@ -92,6 +92,12 @@ public class Main extends PApplet {
 		if (key == 'l') {
 			loop();
 		}
+		
+		if (key == 'f') {
+			for (int i = 0; i < levelManager.rings.size(); i++) {
+				levelManager.rings.get(i).correctToFinalRotation();
+			}
+		}
 
 		if (key == '3') {
 			draw3D = !draw3D;

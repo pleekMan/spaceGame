@@ -6,12 +6,14 @@ import ships.Ship;
 
 import java.util.ArrayList;
 
+import de.looksgood.ani.Ani;
 import processing.core.PImage;
 import processing.core.PVector;
 
 public class LevelManager {
 
 	Main p5;
+	Ani ani;
 
 	Ship ship;
 	ArrayList<Ring> rings;
@@ -20,14 +22,15 @@ public class LevelManager {
 	int ringCount;
 	int artifactCount;
 	
-	//boolean levelCompleted;
+	boolean levelCompletedTrigger;
 
-	boolean isShipInsideRings = false;
+	boolean isShipInsideRings;
 	
 	Timer timer;
 
 	public LevelManager() {
 		p5 = getP5();
+		Ani.init(p5);
 
 		rings = new ArrayList<Ring>();
 		artifacts = new ArrayList<Artifact>();
@@ -40,12 +43,16 @@ public class LevelManager {
 		ship = _ship;
 		ringCount = _rings;
 		artifactCount = 5;
+		
+		levelCompletedTrigger = false;
+		isShipInsideRings = false;
 
 		for (int i = 0; i < ringCount; i++) {
 			Ring actualRing;
 			actualRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, i, p5.color(0, 200, 200 - (100 * i)), 200f - (100 * i), 300f - (100 * i));
 			//actualRing.setImage(p5.loadImage("obraProxy.png"));
-			//actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);			
+			//actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);	
+			actualRing.setAniTool(ani);
 			rings.add(actualRing);
 		}
 		
@@ -56,7 +63,7 @@ public class LevelManager {
 		Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
 		
 		for (int i = 0; i < rings.size(); i++) {
-			PImage imagenObra = p5.loadImage("gameOfCells.jpg");
+			PImage imagenObra = p5.loadImage("lauraPalavecino.png");
 			rings.get(i).setImage(imagenObra);
 
 		}
@@ -106,7 +113,7 @@ public class LevelManager {
 			Ring currentRing = rings.get(i);
 			currentRing.update();
 
-			if (currentRing.isInside(ship.getPosition().x, ship.getPosition().y)) {
+			if (currentRing.isInside(ship.getPosition())) {
 				ship.setColor(p5.color(255, 255, 0));
 				currentRing.modifyVelocity(ship.getPosition().x, ship.getPosition().y);
 				ship.addForce(currentRing.getAngularPushVector(ship.getPosition()));
@@ -160,6 +167,8 @@ public class LevelManager {
 		p5.translate(0, 0, 20);
 		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, 200,200);
 		p5.popMatrix();
+		
+		// CHECK FINISH --------------
 		checkFinish();
 		
 
@@ -172,7 +181,7 @@ public class LevelManager {
 		
 		for (int i = 0; i < rings.size(); i++) {
 			Ring currentRing = rings.get(i);
-			currentRing.renderImageMode();
+			//currentRing.renderImageMode();
 			currentRing.renderOutlineMode();
 		}
 		
@@ -219,9 +228,23 @@ public class LevelManager {
 				ringsAligned &= rings.get(i).isInTunnelLock();
 			}
 			
-			if(ringsAligned)System.out.println("Level Completed");
+			// CHECKS TO TRIGGER ACTIONS ON LEVEL COMPLETED
+			if(ringsAligned && !levelCompletedTrigger){
+				
+				System.out.println("Level Completed");
+				
+				alignRings();
+				
+				levelCompletedTrigger = true;
+			}
 		}
 		
+	}
+
+	private void alignRings() {
+		for (int i = 0; i < rings.size(); i++) {
+			rings.get(i).correctToFinalRotation();
+		}
 	}
 
 	protected Main getP5() {
