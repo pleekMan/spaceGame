@@ -35,7 +35,7 @@ public class Main extends PApplet {
 
 	public static void main(String args[]) {
 		PApplet.main(new String[] { Main.class.getName() });
-		//PApplet.main(new String[] { "--present", Main.class.getName() }); //
+		// PApplet.main(new String[] { "--present", Main.class.getName() }); //
 		// PRESENT MODE
 	}
 
@@ -44,13 +44,13 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		background(25,25,50);
-		
+		background(25, 25, 50);
+
 		// DOTTED BACKGROUND
 		stroke(200);
 		for (int y = 0; y < height; y += 20) {
 			for (int x = 0; x < width; x += 20) {
-				point(x,y);
+				point(x, y);
 			}
 		}
 
@@ -74,7 +74,7 @@ public class Main extends PApplet {
 		fill(255);
 		// text("FR: " + frameRate, 20, 20);
 		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
-		
+
 		text("FR: " + frameRate, 20, 20);
 		hint(ENABLE_DEPTH_TEST);
 
@@ -92,7 +92,7 @@ public class Main extends PApplet {
 		if (key == 'l') {
 			loop();
 		}
-		
+
 		if (key == 'f') {
 			for (int i = 0; i < levelManager.rings.size(); i++) {
 				levelManager.rings.get(i).correctToFinalRotation();
@@ -107,6 +107,9 @@ public class Main extends PApplet {
 			if (keyCode == UP) {
 			}
 		}
+
+		levelManager.onKeyPressed(key);
+
 	}
 
 	public void mousePressed() {

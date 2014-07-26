@@ -2,6 +2,7 @@ package globals;
 
 import java.util.ArrayList;
 
+import de.looksgood.ani.Ani;
 import processing.core.PImage;
 import rings.Artifact;
 import rings.Ring;
@@ -10,16 +11,66 @@ public class LevelPack {
 	
 	Main p5;
 	
+	String name;
 	PImage image;
 	ArrayList<Artifact> artifacts;
 	ArrayList<Ring> rings;
 	
-	public void LevelPack(String levelUrl){
+	Ani ani;
+	
+	public LevelPack(){
 		p5 = getP5();
 		
+		name = "";
+		artifacts = new ArrayList<Artifact>();
+		rings = new ArrayList<Ring>();
 		
 		
 	}
+	
+	public void addRing(float outerLimit, float innerLimit, float velocity){
+		
+		Ring newRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, 0f, p5.color(p5.random(127,255)), outerLimit, innerLimit);
+		newRing.setDiameter(outerLimit, innerLimit);
+		newRing.setAngularVelocity(velocity);
+		newRing.setAniTool(ani);
+		newRing.setImage(image);
+		
+		rings.add(newRing);
+		
+		if(!rings.isEmpty() && rings.size() < 1){
+			Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
+		}
+	}
+	
+	public void addArtifact(int type, float _x, float _y, String description){
+		
+		Artifact newArtifact = new Artifact();
+		newArtifact.setup(type, _x, _y, description);
+		
+		artifacts.add(newArtifact);
+	}
+	
+	public void setImage(PImage _image){
+		image = _image;
+	}
+	
+	public void setName(String _name){
+		name = _name;
+	}
+	
+	public void setAnimationTool(Ani _ani){
+		ani = _ani;
+	}
+	
+	public ArrayList<Ring> getRings(){
+		return rings;
+	}
+	
+	public ArrayList<Artifact> getArtifacts(){
+		return artifacts;
+	}
+	
 	
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();

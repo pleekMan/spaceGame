@@ -34,7 +34,7 @@ public class Ring {
 
 	boolean enableMotion;
 
-	public Ring(float _x, float _y, float zDisplace, int _color, float _inner, float _outer) {
+	public Ring(float _x, float _y, float zDisplace, int _color, float _outer, float _inner) {
 		p5 = getP5();
 
 		pos = new PVector(_x, _y, zDisplace);
@@ -55,7 +55,7 @@ public class Ring {
 		multiplier = 1f;
 
 		enableMotion = true;
-
+		
 		// createRingBuffer();
 		// ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter
 		// * 2);
@@ -130,6 +130,7 @@ public class Ring {
 		p5.image(ringBuffer, 0, 0);
 
 		p5.popMatrix();
+		
 
 	}
 

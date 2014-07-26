@@ -5,10 +5,12 @@ import rings.Artifact;
 import ships.Ship;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.looksgood.ani.Ani;
 import processing.core.PImage;
 import processing.core.PVector;
+import processing.data.XML;
 
 public class LevelManager {
 
@@ -18,6 +20,7 @@ public class LevelManager {
 	Ship ship;
 	ArrayList<Ring> rings;
 	ArrayList<Artifact> artifacts;
+	ArrayList<LevelPack> levels;
 	
 	int ringCount;
 	int artifactCount;
@@ -34,6 +37,7 @@ public class LevelManager {
 
 		rings = new ArrayList<Ring>();
 		artifacts = new ArrayList<Artifact>();
+		levels = new ArrayList<LevelPack>();
 		
 		
 	}
@@ -44,59 +48,94 @@ public class LevelManager {
 		ringCount = _rings;
 		artifactCount = 5;
 		
-		levelCompletedTrigger = false;
-		isShipInsideRings = false;
+		
+		buildLevelPacks();
 
-		for (int i = 0; i < ringCount; i++) {
-			Ring actualRing;
-			actualRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, i, p5.color(0, 200, 200 - (100 * i)), 200f - (100 * i), 300f - (100 * i));
-			//actualRing.setImage(p5.loadImage("obraProxy.png"));
-			//actualRing.setAngularVelocity(p5.TWO_PI * 0.005f);	
-			actualRing.setAniTool(ani);
-			rings.add(actualRing);
-		}
-		
-		rings.get(0).setDiameter(700f, 500f);
-		rings.get(1).setDiameter(500f, 200f);
-		//rings.get(2).setDiameter(400f, 200f);
-		
-		Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
-		
-		for (int i = 0; i < rings.size(); i++) {
-			PImage imagenObra = p5.loadImage("lauraPalavecino.png");
-			rings.get(i).setImage(imagenObra);
+		loadLevel(0);
 
-		}
-
-		rings.get(0).setAngularVelocity(p5.TWO_PI * 0.005f);
-		rings.get(1).setAngularVelocity(-p5.TWO_PI * 0.005f);
-		//rings.get(2).setAngularVelocity(p5.TWO_PI * 0.01f);
-
-		
-		
-		for (int i = 0; i < artifactCount; i++) {
-			Artifact actualArtifact;
-			actualArtifact = new Artifact();
-			actualArtifact.setup(p5.random(p5.width), p5.random(p5.height));
-			artifacts.add(actualArtifact);
-		}
-		
-		artifacts.get(0).setPosition(250,700);
-		artifacts.get(1).setPosition(700,500);
-		artifacts.get(2).setPosition(370,350);
-		artifacts.get(3).setPosition(500,300);
-		artifacts.get(4).setPosition(780,350);
-		
-		artifacts.get(0).setType(1);
-		artifacts.get(1).setType(1);
-		artifacts.get(2).setType(0);
-		artifacts.get(3).setType(1);
-		artifacts.get(4).setType(0);
 
 		timer = new Timer();
 		timer.setDuration(30000);
 		timer.start();
 
+	}
+	
+	private void loadLevel(int levelNumber){
+		p5.println("Level Count: " + levels.size());
+		
+		LevelPack levelToLoad = levels.get(levelNumber);
+		
+		rings.clear();
+		artifacts.clear();
+		
+		// MAKE A COPY (NOT REFERENCE) OF THE LEVELPACK INFO
+		//.clear() will wipe out the obj in the list. These objects are references, thus will wipe them all out of memory.
+		// If I tried to access the same level twice, that level would have been wiped out at .clear()
+		// This "copy" constructor ensures that I do not pass a reference, but a copy of.
+		rings = new ArrayList<Ring>(levelToLoad.getRings());
+		artifacts = new ArrayList<Artifact>(levelToLoad.getArtifacts());
+		
+		levelCompletedTrigger = false;
+		isShipInsideRings = false;
+		
+		
+	}
+	
+	private void buildLevelPacks(){
+		
+		XML levelData;
+		levelData = p5.loadXML("levels/levelData.xml");
+		
+		// LOAD LEVEL TREE
+		XML[] allLevels = levelData.getChildren("level");
+		p5.println("--- Levels found: " + allLevels.length);
+		
+		for (int i = 0; i < allLevels.length; i++) {
+			
+			LevelPack level = new LevelPack();
+			
+			PImage levelImage = p5.loadImage(allLevels[i].getString("imageUrl"));
+			level.setImage(levelImage);
+			level.setAnimationTool(ani);
+			level.setName(allLevels[i].getString("name"));
+			
+			p5.println("Level Name: " + allLevels[i].getString("name"));
+
+			
+			// LOAD RINGS TREE and ADD RINGS
+			XML[] rings = allLevels[i].getChild("rings").getChildren("ring");
+			p5.println("-- Rings found: " + rings.length);
+			
+			for (int j = 0; j < rings.length; j++) {
+				float outLimit = rings[j].getFloat("outerLimit");
+				float innLimit = rings[j].getFloat("innerLimit");
+				float vel = rings[j].getFloat("velocity");
+				
+				p5.println("Out: " + outLimit + " / In: " + innLimit + " / Vel: " + vel);
+				
+				level.addRing(outLimit, innLimit, vel);
+				
+			}
+			
+			// LOAD ARTIFACTS TREE and ADD ARTIFACTS
+			XML[] artifacts = allLevels[i].getChild("artifacts").getChildren("artifact");
+			p5.println("-- Artifacts found: " + artifacts.length);
+			for (int j = 0; j < artifacts.length; j++) {
+				int type = artifacts[j].getInt("type");
+				float x = artifacts[j].getFloat("x");
+				float y = artifacts[j].getFloat("y");
+				String description = artifacts[j].getString("description");
+				
+				p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description; " + description);
+
+				
+				level.addArtifact(type, x, y, description);
+			}
+			
+			levels.add(level);
+		}
+		
+		
 	}
 
 	public void update() {
@@ -245,5 +284,14 @@ public class LevelManager {
 
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
+	}
+
+	public void onKeyPressed(char key) {
+		if(key == '1'){
+			loadLevel(0);
+		} else if (key == '2'){
+			loadLevel(1);
+		}
+		
 	}
 }

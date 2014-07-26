@@ -11,6 +11,7 @@ public class Artifact {
 	PVector pos;
 	float size;
 	int type;
+	String description;
 
 	public Artifact() {
 		p5 = getP5();
@@ -20,9 +21,12 @@ public class Artifact {
 	}
 
 	// x,y,img, umbral
-	public void setup(float newX, float newY) {
+	public void setup(int _type, float newX, float newY, String _description) {
+		type = _type;
 		pos.x = newX;
 		pos.y = newY;
+		description = _description;
+		
 	}
 
 	public void render() {
