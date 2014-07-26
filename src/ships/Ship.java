@@ -39,7 +39,7 @@ public class Ship {
 		applyCentrifugeForce = false;
 
 		shipControl = new ShipController();
-		shipControl.setPosition(850, 880);
+		shipControl.setPosition((int)(p5.width * 0.5f), (int)(p5.height * 0.5f));
 
 	}
 

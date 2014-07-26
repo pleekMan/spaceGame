@@ -80,18 +80,39 @@ public class Ring {
 
 		// RING BUFFER DRAW - BEGIN
 		ringBuffer.beginDraw();
-		// ringBuffer.background(0,0);
+		//ringBuffer.background(0,0);
+		
+		//ringBuffer.fill(0,10);;
+		//ringBuffer.rect(0,0,ringBuffer.width, ringBuffer.height);
 
 		ringBuffer.pushMatrix();
+		
+		/*
+		ringBuffer.textureMode(p5.NORMAL);
+		ringBuffer.beginShape();
+		ringBuffer.texture(ringImage);
+		ringBuffer.vertex(0, 0, 0,0);
+		ringBuffer.vertex(ringBuffer.width, 0, 1,0);
+		ringBuffer.vertex(ringBuffer.width, ringBuffer.height, 1,1);
+		ringBuffer.vertex(0, ringBuffer.height, 0,1);
+		ringBuffer.endShape(p5.CLOSE);
+		*/
+		
 		ringBuffer.translate(ringBuffer.width * 0.5f, ringBuffer.height * 0.5f);
 		ringBuffer.rotate(angularPos);
 		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
 
-		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 10);
+		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 50);
 		ringBuffer.tint(255, 255, 255, alpha);
 		ringBuffer.imageMode(p5.CENTER);
 		ringBuffer.rotate(p5.PI);
+		
+		
 		ringBuffer.image(ringImage, 0, 0, ringBuffer.width, ringBuffer.height);
+		
+		ringBuffer.fill(255,50);
+		ringBuffer.noStroke();
+		ringBuffer.ellipse(100, 0, 20, 20);;
 
 		ringBuffer.popMatrix();
 
@@ -204,6 +225,16 @@ public class Ring {
 		}
 
 	}
+	
+	public float getDiameter() {
+		return limitOuter;
+	}
+
+	public void setDiameter(float outer, float inner) {
+		limitOuter = outer;
+		limitInner = inner;
+	}
+
 
 	public boolean isInTunnelLock() {
 		if (angularPos > (tunnelCenter - tunnelSpread) && angularPos < (tunnelCenter + tunnelSpread)) {
@@ -257,15 +288,7 @@ public class Ring {
 		return shipToCenter;
 	}
 
-	public float getDiameter() {
-		return limitOuter;
-	}
-
-	public void setDiameter(float outer, float inner) {
-		limitOuter = outer;
-		limitInner = inner;
-	}
-
+	
 	public static void setMaxDiameterAllRings(float _maxDiameter) {
 		maxDiameterAllRings = _maxDiameter;
 	}
@@ -277,7 +300,12 @@ public class Ring {
 	public void setImage(PImage _image) {
 		ringImage = _image;
 
-		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings);
+		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings, p5.P2D);
+		
+		// SET BUFFER BACKGROUND TO TRANSPARENT
+		ringBuffer.beginDraw();
+		ringBuffer.background(0,0);
+		ringBuffer.endDraw();
 
 		createRingMask(ringImage);
 	}

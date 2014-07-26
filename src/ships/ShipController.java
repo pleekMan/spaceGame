@@ -26,6 +26,7 @@ public class ShipController {
 		// RENDER CONTROLLER GUI
 
 		p5.noFill();
+		p5.strokeWeight(2);
 		for (float i = 1; i > 0; i -= 0.1f) {
 			p5.stroke(200, 200 - (200 * i));
 			p5.ellipse(center.x, center.y, maxRadius * (i), maxRadius * (i));

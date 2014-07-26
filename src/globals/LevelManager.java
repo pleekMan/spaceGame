@@ -56,9 +56,9 @@ public class LevelManager {
 			rings.add(actualRing);
 		}
 		
-		rings.get(0).setDiameter(800f, 500f);
-		rings.get(1).setDiameter(500f, 400f);
-		rings.get(2).setDiameter(400f, 200f);
+		rings.get(0).setDiameter(700f, 500f);
+		rings.get(1).setDiameter(500f, 200f);
+		//rings.get(2).setDiameter(400f, 200f);
 		
 		Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
 		
@@ -67,14 +67,10 @@ public class LevelManager {
 			rings.get(i).setImage(imagenObra);
 
 		}
-		//rings.get(0).setImage(imagenObra);
-		//rings.get(1).setImage(imagenObra);
-		//rings.get(2).setImage(imagenObra);
-
 
 		rings.get(0).setAngularVelocity(p5.TWO_PI * 0.005f);
 		rings.get(1).setAngularVelocity(-p5.TWO_PI * 0.005f);
-		rings.get(2).setAngularVelocity(p5.TWO_PI * 0.01f);
+		//rings.get(2).setAngularVelocity(p5.TWO_PI * 0.01f);
 
 		
 		

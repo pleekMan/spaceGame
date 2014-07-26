@@ -25,7 +25,7 @@ public class Main extends PApplet {
 		ship = new Ship();
 
 		levelManager = new LevelManager();
-		levelManager.setup(3, ship);
+		levelManager.setup(2, ship);
 
 		draw3D = false;
 
