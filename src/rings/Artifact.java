@@ -1,6 +1,7 @@
 package rings;
 
 import processing.core.PVector;
+import globals.LevelManager;
 import globals.Main;
 import globals.PAppletSingleton;
 
@@ -10,8 +11,11 @@ public class Artifact {
 
 	PVector pos;
 	float size;
-	int type;
+	int type; // 0 = Kill, 1 = Bounce
+	String name;
 	String description;
+	
+	Balloon balloon;
 
 	public Artifact() {
 		p5 = getP5();
@@ -21,15 +25,34 @@ public class Artifact {
 	}
 
 	// x,y,img, umbral
-	public void setup(int _type, float newX, float newY, String _description) {
+	public void setup(int _type, float newX, float newY, String _name, String _description) {
 		type = _type;
 		pos.x = newX;
 		pos.y = newY;
+		name = _name;
 		description = _description;
+		
+		balloon = new Balloon(pos.x - 10, pos.y, name, description);
+		balloon.setAni(LevelManager.getAni());
+		
+	}
+	
+	public void update(){
+		
+		// BALLOON TRIGGER
+		if(p5.dist(p5.mouseX, p5.mouseY, pos.x, pos.y) < size){
+			balloon.appear();
+		} else {
+			if(balloon.isShowing == true){
+				balloon.disappear();
+			}
+		}
 		
 	}
 
 	public void render() {
+
+		p5.stroke(255);
 		if (type == 0) {
 			p5.line(pos.x - (size * 0.5f), pos.y - (size * 0.5f), pos.x + (size * 0.5f), pos.y + (size * 0.5f));
 			p5.line(pos.x + (size * 0.5f), pos.y - (size * 0.5f), pos.x - (size * 0.5f), pos.y + (size * 0.5f));
@@ -37,6 +60,10 @@ public class Artifact {
 			p5.ellipse(pos.x, pos.y, size, size);
 			// p5.ellipse(0,0, size, size);
 		}
+		
+		//p5.text(description, pos.x, pos.y - size);
+		
+		balloon.render();
 	}
 
 	public boolean collidedWith(float _x, float _y) {
@@ -59,6 +86,10 @@ public class Artifact {
 
 	public int getType() {
 		return type;
+	}
+	
+	public void setDescription(String _description){
+		description = _description;
 	}
 
 	// P5 SINGLETON

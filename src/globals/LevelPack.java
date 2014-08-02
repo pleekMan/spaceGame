@@ -49,10 +49,10 @@ public class LevelPack {
 		
 	}
 	
-	public void addArtifact(int type, float _x, float _y, String description){
+	public void addArtifact(int type, float _x, float _y, String _name, String description){
 		
 		Artifact newArtifact = new Artifact();
-		newArtifact.setup(type, _x, _y, description);
+		newArtifact.setup(type, _x, _y, _name, description);
 		
 		artifacts.add(newArtifact);
 	}

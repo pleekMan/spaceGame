@@ -15,7 +15,7 @@ import processing.data.XML;
 public class LevelManager {
 
 	Main p5;
-	Ani ani;
+	static Ani ani;
 
 	Ship ship;
 	ArrayList<Ring> rings;
@@ -83,7 +83,7 @@ public class LevelManager {
 	private void buildLevelPacks(){
 		
 		XML levelData;
-		levelData = p5.loadXML("levels/levelData.xml");
+		levelData = p5.loadXML("levels/levelData_Single.xml");
 		
 		// LOAD LEVEL TREE
 		XML[] allLevels = levelData.getChildren("level");
@@ -123,12 +123,13 @@ public class LevelManager {
 				int type = artifacts[j].getInt("type");
 				float x = artifacts[j].getFloat("x");
 				float y = artifacts[j].getFloat("y");
+				String name = artifacts[j].getString("name");
 				String description = artifacts[j].getString("description");
 				
 				p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description: " + description);
 
 				
-				level.addArtifact(type, x, y, description);
+				level.addArtifact(type, x, y, name, description);
 			}
 			
 			levels.add(level);
@@ -174,23 +175,25 @@ public class LevelManager {
 		ship.update();
 		
 		// ARTIFACTS - BEGIN
-		/*
+		
 		for (int i = 0; i < artifacts.size(); i++) {
+			
+			artifacts.get(i).update();
 			
 			if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
 				if (artifacts.get(i).getType() == 0) {
+					// GAME OVER
 					p5.noFill();
 					p5.stroke(255,0,0);
 					p5.line(0, 0, p5.width, p5.height);
 					p5.line(p5.width, 0, 0, p5.height);
 					p5.noLoop();
 				} else {
-					ship.addForce(new PVector(p5.random(-20, 20), p5.random(-20,20)));
+					ship.addForce(new PVector(p5.random(-200, 200), p5.random(-200,200)));
 				}
 				
 			}
 		}
-		*/
 		// ARTIFACTS - END
 
 		
@@ -215,8 +218,8 @@ public class LevelManager {
 		
 		for (int i = 0; i < rings.size(); i++) {
 			Ring currentRing = rings.get(i);
-			currentRing.renderImageMode();
 			currentRing.renderOutlineMode();
+			currentRing.renderImageMode();
 		}
 		
 		
@@ -252,14 +255,19 @@ public class LevelManager {
 	
 	private void checkFinish(){
 		
+		//p5.println("CHECKING FINISH");
+
 		// CHECK IF SHIP IS IN THE MIDDLE OF THE RINGS
-		float shipDist = p5.dist(ship.getPosition().x, ship.getPosition().y, rings.get(0).getPosition().x, rings.get(0).getPosition().x);
+		float shipDist = p5.dist(ship.getPosition().x, ship.getPosition().y, rings.get(0).getPosition().x, rings.get(0).getPosition().y);
 		if(shipDist < ship.getSize()){
 			
+			//p5.println("SHIP INSIDE FINSIH LINE");
+
 			// LOOP THROUGH RINGS TO CHECK IF THEY ARE ALIGNED
 			boolean ringsAligned = true;
 			for (int i = 0; i < rings.size(); i++) {
 				ringsAligned &= rings.get(i).isInTunnelLock();
+				//p5.println("Ring " + i +" Locked");
 			}
 			
 			// CHECKS TO TRIGGER ACTIONS ON LEVEL COMPLETED
@@ -279,6 +287,10 @@ public class LevelManager {
 		for (int i = 0; i < rings.size(); i++) {
 			rings.get(i).correctToFinalRotation();
 		}
+	}
+	
+	static public Ani getAni(){
+		return ani;
 	}
 
 	protected Main getP5() {

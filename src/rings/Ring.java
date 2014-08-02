@@ -51,11 +51,12 @@ public class Ring {
 		shipWentThrough = false;
 
 		angularPos = 0;
+		previousAngularPos = angularPos;
 		angularVelMax = p5.TWO_PI * 0.01f;
 		multiplier = 1f;
 
 		enableMotion = true;
-		
+
 		// createRingBuffer();
 		// ringBuffer = p5.createGraphics((int) limitOuter * 2, (int) limitOuter
 		// * 2);
@@ -80,43 +81,47 @@ public class Ring {
 
 		// RING BUFFER DRAW - BEGIN
 		ringBuffer.beginDraw();
-		//ringBuffer.background(0,0);
-		
-		//ringBuffer.fill(0,10);;
-		//ringBuffer.rect(0,0,ringBuffer.width, ringBuffer.height);
+		// ringBuffer.background(0,0);
+
+		// ringBuffer.fill(0,10);;
+		// ringBuffer.rect(0,0,ringBuffer.width, ringBuffer.height);
 
 		ringBuffer.pushMatrix();
-		
+
 		/*
-		ringBuffer.textureMode(p5.NORMAL);
-		ringBuffer.beginShape();
-		ringBuffer.texture(ringImage);
-		ringBuffer.vertex(0, 0, 0,0);
-		ringBuffer.vertex(ringBuffer.width, 0, 1,0);
-		ringBuffer.vertex(ringBuffer.width, ringBuffer.height, 1,1);
-		ringBuffer.vertex(0, ringBuffer.height, 0,1);
-		ringBuffer.endShape(p5.CLOSE);
-		*/
-		
+		 * ringBuffer.textureMode(p5.NORMAL); ringBuffer.beginShape();
+		 * ringBuffer.texture(ringImage); ringBuffer.vertex(0, 0, 0,0);
+		 * ringBuffer.vertex(ringBuffer.width, 0, 1,0);
+		 * ringBuffer.vertex(ringBuffer.width, ringBuffer.height, 1,1);
+		 * ringBuffer.vertex(0, ringBuffer.height, 0,1);
+		 * ringBuffer.endShape(p5.CLOSE);
+		 */
+
 		ringBuffer.translate(ringBuffer.width * 0.5f, ringBuffer.height * 0.5f);
-		
-		//p5.fill(0,255,0);
-		//p5.text("Ring", 0, -10);
-		
+
+		// p5.fill(0,255,0);
+		// p5.text("Ring", 0, -10);
+
 		ringBuffer.rotate(angularPos);
 		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
 
-		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 10);
-		ringBuffer.tint(255, 255, 255, alpha);
+		if (enableMotion) {
+			float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 10);
+			ringBuffer.tint(255, 255, 255, alpha);
+		} else {
+			// WHEN LEVEL IS FINISHED AND WE ARE CORRECTING ROTATION
+			ringBuffer.tint(255);
+		}
+
 		ringBuffer.imageMode(p5.CENTER);
 		ringBuffer.rotate(p5.PI);
-		
-		
+
 		ringBuffer.image(ringImage, 0, 0, ringBuffer.width, ringBuffer.height);
-		
-		ringBuffer.fill(255,50);
+
+		ringBuffer.fill(255);
 		ringBuffer.noStroke();
-		ringBuffer.ellipse(100, 0, 20, 20);;
+		ringBuffer.ellipse(100, 0, 20, 20);
+		;
 
 		ringBuffer.popMatrix();
 
@@ -132,12 +137,11 @@ public class Ring {
 
 		p5.imageMode(p5.CENTER);
 		p5.image(ringBuffer, 0, 0);
-		
-		p5.rectMode(p5.CENTER);
-		p5.rect(0, 0, ringBuffer.width, ringBuffer.height);
+
+		// p5.rectMode(p5.CENTER);
+		// p5.rect(0, 0, ringBuffer.width, ringBuffer.height);
 
 		p5.popMatrix();
-		
 
 	}
 
@@ -221,7 +225,7 @@ public class Ring {
 		}
 
 	}
-	
+
 	public boolean isInside(PVector inPos) {
 
 		float distance = p5.dist(pos.x, pos.y, inPos.x, inPos.y);
@@ -233,7 +237,7 @@ public class Ring {
 		}
 
 	}
-	
+
 	public float getDiameter() {
 		return limitOuter;
 	}
@@ -242,7 +246,6 @@ public class Ring {
 		limitOuter = outer;
 		limitInner = inner;
 	}
-
 
 	public boolean isInTunnelLock() {
 		if (angularPos > (tunnelCenter - tunnelSpread) && angularPos < (tunnelCenter + tunnelSpread)) {
@@ -262,6 +265,20 @@ public class Ring {
 	}
 
 	public float getAngularVelocity() {
+
+		// CORRECTION FOR: WHEN RESETTING angularPos to 0 after a whole turn
+		// previousAngularPos would become bigger than angularPos, thus giving
+		// out strange velocity
+		if (angularVelMax > 0) {
+			if (angularPos < previousAngularPos) {
+				previousAngularPos = -previousAngularPos;
+			}
+		} else {
+			if (angularPos > previousAngularPos) {
+				previousAngularPos = p5.TWO_PI + (previousAngularPos * 2);
+			}
+		}
+ 
 		return angularPos - previousAngularPos;
 	}
 
@@ -296,7 +313,6 @@ public class Ring {
 		return shipToCenter;
 	}
 
-	
 	public static void setMaxDiameterAllRings(float _maxDiameter) {
 		maxDiameterAllRings = _maxDiameter;
 	}
@@ -309,10 +325,10 @@ public class Ring {
 		ringImage = _image;
 
 		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings);
-		
+
 		// SET BUFFER BACKGROUND TO TRANSPARENT
 		ringBuffer.beginDraw();
-		ringBuffer.background(0,0);
+		ringBuffer.background(0, 0);
 		ringBuffer.endDraw();
 
 		createRingMask(ringImage);
@@ -334,7 +350,7 @@ public class Ring {
 
 	public void correctToFinalRotation() {
 		enableMotion = false;
-		//previousAngularPos = angularPos;
+		// previousAngularPos = angularPos;
 		ani.to(this, 1.0f, "angularPos", tunnelCenter);
 	}
 
