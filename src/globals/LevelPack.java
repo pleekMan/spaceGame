@@ -31,16 +31,22 @@ public class LevelPack {
 	public void addRing(float outerLimit, float innerLimit, float velocity){
 		
 		Ring newRing = new Ring(p5.width * 0.5f, p5.height * 0.5f, 0f, p5.color(p5.random(127,255)), outerLimit, innerLimit);
+		
 		newRing.setDiameter(outerLimit, innerLimit);
 		newRing.setAngularVelocity(velocity);
 		newRing.setAniTool(ani);
-		newRing.setImage(image);
+		
+		//if(rings.isEmpty()){
+			//Ring.setMaxDiameterAllRings(newRing.getDiameter());
+		//}
+		
+		
+		PImage newImageToRing = image.get();
+		newRing.setImage(newImageToRing);
 		
 		rings.add(newRing);
 		
-		if(!rings.isEmpty() && rings.size() < 1){
-			Ring.setMaxDiameterAllRings(rings.get(0).getDiameter());
-		}
+		
 	}
 	
 	public void addArtifact(int type, float _x, float _y, String description){

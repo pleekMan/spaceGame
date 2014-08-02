@@ -26,7 +26,6 @@ public class LevelManager {
 	int artifactCount;
 	
 	boolean levelCompletedTrigger;
-
 	boolean isShipInsideRings;
 	
 	Timer timer;
@@ -126,7 +125,7 @@ public class LevelManager {
 				float y = artifacts[j].getFloat("y");
 				String description = artifacts[j].getString("description");
 				
-				p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description; " + description);
+				p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description: " + description);
 
 				
 				level.addArtifact(type, x, y, description);
@@ -216,7 +215,7 @@ public class LevelManager {
 		
 		for (int i = 0; i < rings.size(); i++) {
 			Ring currentRing = rings.get(i);
-			//currentRing.renderImageMode();
+			currentRing.renderImageMode();
 			currentRing.renderOutlineMode();
 		}
 		

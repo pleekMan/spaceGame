@@ -43,7 +43,7 @@ public class Ring {
 		limitInner = _inner;
 		limitOuter = _outer;
 
-		maxDiameterAllRings = 10; // PONELE
+		maxDiameterAllRings = 700; // PONELE
 
 		tunnelCenter = p5.PI;
 		tunnelSpread = p5.TWO_PI * 0.03f;
@@ -99,10 +99,14 @@ public class Ring {
 		*/
 		
 		ringBuffer.translate(ringBuffer.width * 0.5f, ringBuffer.height * 0.5f);
+		
+		//p5.fill(0,255,0);
+		//p5.text("Ring", 0, -10);
+		
 		ringBuffer.rotate(angularPos);
 		// angularPos = angularPos > p5.TWO_PI ? 0f : angularPos;
 
-		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 50);
+		float alpha = p5.map(getAngularVelocity(), 0, angularVelMax, 255, 10);
 		ringBuffer.tint(255, 255, 255, alpha);
 		ringBuffer.imageMode(p5.CENTER);
 		ringBuffer.rotate(p5.PI);
@@ -128,6 +132,9 @@ public class Ring {
 
 		p5.imageMode(p5.CENTER);
 		p5.image(ringBuffer, 0, 0);
+		
+		p5.rectMode(p5.CENTER);
+		p5.rect(0, 0, ringBuffer.width, ringBuffer.height);
 
 		p5.popMatrix();
 		
@@ -301,7 +308,7 @@ public class Ring {
 	public void setImage(PImage _image) {
 		ringImage = _image;
 
-		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings, p5.P2D);
+		ringBuffer = p5.createGraphics((int) maxDiameterAllRings, (int) maxDiameterAllRings);
 		
 		// SET BUFFER BACKGROUND TO TRANSPARENT
 		ringBuffer.beginDraw();
