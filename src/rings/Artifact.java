@@ -53,7 +53,7 @@ public class Artifact {
 	public void render() {
 
 		p5.stroke(255);
-		if (type == 0) {
+		if (type == 1) {
 			p5.line(pos.x - (size * 0.5f), pos.y - (size * 0.5f), pos.x + (size * 0.5f), pos.y + (size * 0.5f));
 			p5.line(pos.x + (size * 0.5f), pos.y - (size * 0.5f), pos.x - (size * 0.5f), pos.y + (size * 0.5f));
 		} else {

@@ -86,7 +86,7 @@ public class Ring {
 		// ringBuffer.fill(0,10);;
 		// ringBuffer.rect(0,0,ringBuffer.width, ringBuffer.height);
 
-		ringBuffer.pushMatrix();
+		ringBuffer.pushMatrix();	
 
 		/*
 		 * ringBuffer.textureMode(p5.NORMAL); ringBuffer.beginShape();
@@ -275,7 +275,8 @@ public class Ring {
 			}
 		} else {
 			if (angularPos > previousAngularPos) {
-				previousAngularPos = p5.TWO_PI + (previousAngularPos * 2);
+				//previousAngularPos = p5.TWO_PI + (previousAngularPos * 2);
+				//previousAngularPos = p5.TWO_PI;
 			}
 		}
  
