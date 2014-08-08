@@ -6,5 +6,12 @@
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/processing Core/core_2.0.jar"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/jl1.0.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/jsminim.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/minim-spi.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/minim.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/tritonus_share.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,5 +1,6 @@
 package rings;
 
+import processing.core.PImage;
 import processing.core.PVector;
 import globals.LevelManager;
 import globals.Main;
@@ -14,7 +15,8 @@ public class Artifact {
 	int type; // 0 = Kill, 1 = Bounce
 	String name;
 	String description;
-	
+	PImage image;
+
 	Balloon balloon;
 
 	public Artifact() {
@@ -31,27 +33,30 @@ public class Artifact {
 		pos.y = newY;
 		name = _name;
 		description = _description;
-		
+
 		balloon = new Balloon(pos.x - 10, pos.y, name, description);
 		balloon.setAni(LevelManager.getAni());
-		
+
 	}
-	
-	public void update(){
-		
+
+	public void update() {
+
 		// BALLOON TRIGGER
-		if(p5.dist(p5.mouseX, p5.mouseY, pos.x, pos.y) < size){
+		if (p5.dist(p5.mouseX, p5.mouseY, pos.x, pos.y) < size) {
 			balloon.appear();
 		} else {
-			if(balloon.isShowing == true){
+			if (balloon.isShowing == true) {
 				balloon.disappear();
 			}
 		}
-		
+
 	}
 
 	public void render() {
 
+		p5.image(image, pos.x, pos.y);
+		
+		/*
 		p5.stroke(255);
 		if (type == 1) {
 			p5.line(pos.x - (size * 0.5f), pos.y - (size * 0.5f), pos.x + (size * 0.5f), pos.y + (size * 0.5f));
@@ -60,9 +65,10 @@ public class Artifact {
 			p5.ellipse(pos.x, pos.y, size, size);
 			// p5.ellipse(0,0, size, size);
 		}
-		
-		//p5.text(description, pos.x, pos.y - size);
-		
+		*/
+
+		// p5.text(description, pos.x, pos.y - size);
+
 		balloon.render();
 	}
 
@@ -87,9 +93,13 @@ public class Artifact {
 	public int getType() {
 		return type;
 	}
-	
-	public void setDescription(String _description){
+
+	public void setDescription(String _description) {
 		description = _description;
+	}
+
+	public void setImage(PImage _artifactImage) {
+		image = _artifactImage;
 	}
 
 	// P5 SINGLETON

@@ -1,5 +1,6 @@
 package globals;
 
+import levels.GameMenu;
 import processing.core.*;
 import rings.Ring;
 import ships.Ship;
@@ -9,9 +10,8 @@ public class Main extends PApplet {
 	Ship ship;
 
 	LevelManager levelManager;
-
-	PImage backImage;
-
+	GameMenu gameMenu;
+	
 	boolean draw3D;
 
 	public void setup() {
@@ -24,12 +24,15 @@ public class Main extends PApplet {
 
 		ship = new Ship();
 
+		gameMenu = new GameMenu();
+		gameMenu.setup();
+		
 		levelManager = new LevelManager();
-		levelManager.setup(2, ship);
+		levelManager.setup(2, ship, gameMenu);
+		
+		
 
 		draw3D = false;
-
-		backImage = loadImage("fondo.png");
 
 	}
 
@@ -71,11 +74,16 @@ public class Main extends PApplet {
 		levelManager.render2D();
 
 		hint(DISABLE_DEPTH_TEST);
+		
+		gameMenu.render();
+		
 		fill(255);
 		// text("FR: " + frameRate, 20, 20);
 		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
 
 		text("FR: " + frameRate, 20, 20);
+		
+		
 		hint(ENABLE_DEPTH_TEST);
 
 	}
@@ -107,13 +115,30 @@ public class Main extends PApplet {
 			if (keyCode == UP) {
 			}
 		}
-
+		
+		
+		if (key == 'o') {
+			gameMenu.appear();
+		}
+		if (key == 'l') {
+			gameMenu.disappear();
+		}
+		
 		levelManager.onKeyPressed(key);
 
 	}
 
 	public void mousePressed() {
+		
 		ship.onMousePressed();
+		
+		//gameMenu.onMousePressed();
+		
+		if(gameMenu.getSelectedLevel() != -1){
+			levelManager.loadLevel(gameMenu.getSelectedLevel());
+			gameMenu.disappear();
+		}
+		
 	}
 
 	public void mouseReleased() {

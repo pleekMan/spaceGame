@@ -1,4 +1,7 @@
-package globals;
+package levels;
+
+import globals.Main;
+import globals.PAppletSingleton;
 
 import java.util.ArrayList;
 
@@ -13,6 +16,7 @@ public class LevelPack {
 	
 	String name;
 	PImage image;
+	PImage splashImage;
 	ArrayList<Artifact> artifacts;
 	ArrayList<Ring> rings;
 	
@@ -49,16 +53,25 @@ public class LevelPack {
 		
 	}
 	
-	public void addArtifact(int type, float _x, float _y, String _name, String description){
+	public void addArtifact(int type, float _x, float _y, String _name, String description, PImage _artifactImage){
 		
 		Artifact newArtifact = new Artifact();
 		newArtifact.setup(type, _x, _y, _name, description);
+		newArtifact.setImage(_artifactImage);
 		
 		artifacts.add(newArtifact);
 	}
 	
 	public void setImage(PImage _image){
 		image = _image;
+	}
+	
+	public void setSplashImage(PImage _splashImage){
+		splashImage = _splashImage;
+	}
+	
+	public PImage getSplashImage(){
+		return splashImage;
 	}
 	
 	public void setName(String _name){

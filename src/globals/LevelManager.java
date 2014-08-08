@@ -7,6 +7,9 @@ import ships.Ship;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import levels.LevelPack;
+import levels.GameMenu;
+import ddf.minim.Minim;
 import de.looksgood.ani.Ani;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -15,12 +18,16 @@ import processing.data.XML;
 public class LevelManager {
 
 	Main p5;
+	GameMenu gameMenuInstance;
 	static Ani ani;
+	static public Minim minim;
 
 	Ship ship;
 	ArrayList<Ring> rings;
 	ArrayList<Artifact> artifacts;
 	ArrayList<LevelPack> levels;
+
+	//GameMenu levelSplash;
 
 	int ringCount;
 	int artifactCount;
@@ -32,6 +39,12 @@ public class LevelManager {
 
 	int atLevel = 0;
 
+	public enum LevelState {
+		PLAY, SPLASH
+	}
+
+	LevelState levelState;
+
 	public LevelManager() {
 
 		p5 = getP5();
@@ -41,25 +54,35 @@ public class LevelManager {
 		artifacts = new ArrayList<Artifact>();
 		levels = new ArrayList<LevelPack>();
 
+		//levelSplash = new GameMenu();
+
+		minim = new Minim(p5);
+
 	}
 
-	public void setup(int _rings, Ship _ship) {
+	public void setup(int _rings, Ship _ship, GameMenu gm) {
 
 		ship = _ship;
 		ringCount = _rings;
-		artifactCount = 5;
+		artifactCount = 0;
+		
+		gameMenuInstance = gm;
 
 		buildLevelPacks();
 
 		loadLevel(atLevel);
+		// levelSplash.disappear();
+		//levelSplash.setup();
 
 		timer = new Timer();
 		timer.setDuration(30000);
 		timer.start();
 
+		levelState = LevelState.PLAY;
+
 	}
 
-	private void loadLevel(int levelNumber) {
+	public void loadLevel(int levelNumber) {
 
 		if (levelNumber < levels.size()) {
 			p5.println("Level Count: " + levels.size());
@@ -81,6 +104,9 @@ public class LevelManager {
 
 			levelCompletedTrigger = false;
 			isShipInsideRings = false;
+
+			//levelSplash.setImage(levelToLoad.getSplashImage());
+			//levelSplash.appear();
 		}
 
 	}
@@ -89,6 +115,10 @@ public class LevelManager {
 
 		XML levelData;
 		levelData = p5.loadXML("levels/levelData_Single.xml");
+		
+		// LOAD ARTIFACT IMAGE
+		PImage bounceArtifactImage = p5.loadImage("artifactBounce.png");
+		PImage killArtifactImage = p5.loadImage("artifactKill.png");
 
 		// LOAD LEVEL TREE
 		XML[] allLevels = levelData.getChildren("level");
@@ -99,7 +129,10 @@ public class LevelManager {
 			LevelPack level = new LevelPack();
 
 			PImage levelImage = p5.loadImage(allLevels[i].getString("imageUrl"));
+			PImage splashImage = p5.loadImage(allLevels[i].getString("splashUrl"));
+			
 			level.setImage(levelImage);
+			level.setSplashImage(splashImage);
 			level.setAnimationTool(ani);
 			level.setName(allLevels[i].getString("name"));
 
@@ -131,10 +164,18 @@ public class LevelManager {
 					float y = artifacts[j].getFloat("y");
 					String name = artifacts[j].getString("name");
 					String description = artifacts[j].getString("description");
-
+					
+					PImage actualArtifactImage;
+					if (type == 0) {
+						actualArtifactImage = bounceArtifactImage;
+					} else {
+						actualArtifactImage = killArtifactImage;
+					}
+					
 					p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description: " + description);
+					
 
-					level.addArtifact(type, x, y, name, description);
+					level.addArtifact(type, x, y, name, description, actualArtifactImage);
 				}
 			}
 
@@ -145,68 +186,79 @@ public class LevelManager {
 
 	public void update() {
 
-		// RING MOTION - BEGIN --------------------
-		isShipInsideRings = false;
+		//if (levelState == LevelState.PLAY) {
 
-		for (int i = 0; i < rings.size(); i++) {
-			Ring currentRing = rings.get(i);
-			currentRing.update();
+			// RING MOTION - BEGIN --------------------
+			isShipInsideRings = false;
 
-			if (currentRing.isInside(ship.getPosition())) {
-				ship.setColor(p5.color(255, 255, 0));
-				currentRing.modifyVelocity(ship.getPosition().x, ship.getPosition().y);
-				ship.addForce(currentRing.getAngularPushVector(ship.getPosition()));
+			for (int i = 0; i < rings.size(); i++) {
+				Ring currentRing = rings.get(i);
+				currentRing.update();
 
-				isShipInsideRings = true;
+				if (currentRing.isInside(ship.getPosition())) {
+					ship.setColor(p5.color(255, 255, 0));
+					currentRing.modifyVelocity(ship.getPosition().x, ship.getPosition().y);
+					ship.addForce(currentRing.getAngularPushVector(ship.getPosition()));
 
-			} else {
-				// ship.setColor(p5.color(0, 255, 255));
-				// ship.addForce(new PVector(0, 0));
-			}
+					isShipInsideRings = true;
 
-		}
-
-		if (!isShipInsideRings) {
-			ship.setColor(p5.color(0, 255, 255));
-			ship.addForce(new PVector(0, 0));
-		}
-
-		// RING MOTION - END ---------------------
-
-		ship.update();
-
-		// ARTIFACTS - BEGIN
-
-		for (int i = 0; i < artifacts.size(); i++) {
-
-			artifacts.get(i).update();
-
-			if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
-				if (artifacts.get(i).getType() == 1) {
-					// GAME OVER
-					p5.noFill();
-					p5.stroke(255, 0, 0);
-					p5.line(0, 0, p5.width, p5.height);
-					p5.line(p5.width, 0, 0, p5.height);
-					p5.noLoop();
 				} else {
-					ship.addForce(new PVector(p5.random(-200, 200), p5.random(-200, 200)));
+					// ship.setColor(p5.color(0, 255, 255));
+					// ship.addForce(new PVector(0, 0));
 				}
 
 			}
+
+			if (!isShipInsideRings) {
+				ship.setColor(p5.color(0, 255, 255));
+				ship.addForce(new PVector(0, 0));
+			}
+
+			// RING MOTION - END ---------------------
+
+			ship.update();
+
+			// ARTIFACTS - BEGIN
+
+			for (int i = 0; i < artifacts.size(); i++) {
+
+				artifacts.get(i).update();
+
+				if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
+					if (artifacts.get(i).getType() == 1) {
+						// GAME OVER
+						p5.noFill();
+						p5.stroke(255, 0, 0);
+						p5.line(0, 0, p5.width, p5.height);
+						p5.line(p5.width, 0, 0, p5.height);
+						p5.noLoop();
+					} else {
+						ship.addForce(new PVector(p5.random(-200, 200), p5.random(-200, 200)));
+					}
+
+				}
+			}
+			// ARTIFACTS - END
+
+			// DRAW FINNISH LINE
+			p5.noFill();
+			p5.stroke(255);
+			p5.pushMatrix();
+			p5.translate(0, 0, 20);
+			p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, 200, 200);
+			p5.popMatrix();
+
+			// CHECK FINISH --------------
+			checkFinish();
+		/*
+		} else {
+			if (levelSplash.fadeOutFinished()) {
+				atLevel++;
+				loadLevel(atLevel++);
+
+			}
 		}
-		// ARTIFACTS - END
-
-		// DRAW FINNISH LINE
-		p5.noFill();
-		p5.stroke(255);
-		p5.pushMatrix();
-		p5.translate(0, 0, 20);
-		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, 200, 200);
-		p5.popMatrix();
-
-		// CHECK FINISH --------------
-		checkFinish();
+		*/
 
 	}
 
@@ -231,12 +283,18 @@ public class LevelManager {
 		}
 
 		ship.render();
+		
+		//levelSplash.render();
+		
 		p5.hint(p5.ENABLE_DEPTH_TEST);
 
 		// DRAW FINISH ZONE
 		p5.noFill();
 		p5.stroke(127);
 		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, ship.getSize(), ship.getSize());
+		
+
+
 	}
 
 	public void render2D() {
@@ -273,6 +331,10 @@ public class LevelManager {
 				System.out.println("Level Completed");
 
 				alignRings();
+				//levelSplash.appear();
+				//levelState = LevelState.SPLASH;
+				
+				gameMenuInstance.appear();
 
 				levelCompletedTrigger = true;
 			}
@@ -313,6 +375,13 @@ public class LevelManager {
 			atLevel--;
 			atLevel = p5.constrain(atLevel, 0, levels.size());
 			loadLevel(atLevel);
+		}
+
+		if (p5.keyCode == p5.ENTER) {
+			atLevel++;
+			atLevel = p5.constrain(atLevel, 0, levels.size());
+			loadLevel(atLevel);
+			//levelSplash.disappear();
 		}
 
 	}
