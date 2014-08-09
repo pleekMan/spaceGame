@@ -3,8 +3,10 @@ package levels;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import Particles.VortexParticle;
 import ddf.minim.AudioPlayer;
 import de.looksgood.ani.Ani;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import globals.LevelManager;
 import globals.Main;
@@ -13,6 +15,8 @@ import globals.PAppletSingleton;
 public class GameMenu {
 	Main p5;
 
+	PGraphics menuLayer;
+	
 	ArrayList<Rectangle> buttons;
 	ArrayList<PImage> infoBoxes;
 	PImage backImage;
@@ -21,6 +25,8 @@ public class GameMenu {
 	float animMultiplier;
 
 	int levelSelected;
+	
+	VortexParticle[] particles;
 
 	AudioPlayer sonido;
 
@@ -29,6 +35,8 @@ public class GameMenu {
 	}
 
 	public void setup() {
+		
+		menuLayer = p5.createGraphics(p5.width, p5.height);
 
 		animMultiplier = 1f;
 
@@ -47,6 +55,11 @@ public class GameMenu {
 		}
 		placeButtons();
 		loadInfoBoxes();
+		
+		particles = new VortexParticle[400];
+		for (int i = 0; i < particles.length; i++) {
+			particles[i] = new VortexParticle();
+		}
 
 		// sonido = LevelManager.minim.loadFile(filename);
 
@@ -62,36 +75,62 @@ public class GameMenu {
 
 	public void render() {
 
+		
 		isHovering();
 
-		p5.imageMode(p5.CENTER);
-		p5.pushStyle();
+		menuLayer.beginDraw();
+		menuLayer.background(0);
+		
+		menuLayer.imageMode(p5.CENTER);
+		menuLayer.pushStyle();
 
 		if (animMultiplier > 0.01) {
 
-			p5.tint(255, 255 * animMultiplier);
+			//menuLayer.tint(255, 255 * animMultiplier);
 
-			p5.pushMatrix();
+			menuLayer.pushMatrix();
 
-			p5.translate(p5.width * 0.5f, p5.height * 0.5f);
-			p5.scale(1 + (1 - animMultiplier));
+			menuLayer.translate(p5.width * 0.5f, p5.height * 0.5f);
+			menuLayer.scale(1 + (1 - animMultiplier));
 
-			p5.image(backImage, 0, 0);
+			menuLayer.image(backImage, 0, 0);
+			
+			
+			// RENDER vortex PARTICLES
+			for (int i = 0; i < particles.length; i++) {
+				particles[i].update();
+				particles[i].render(menuLayer);
+			}
 
-			p5.popStyle();
+			menuLayer.popStyle();
 
-			p5.image(wheel, 0, 15);
+			menuLayer.image(wheel, 0, 15);
 			
 			if(levelSelected != -1){
-				p5.image(infoBoxes.get(levelSelected), 0, 15);
+				menuLayer.image(infoBoxes.get(levelSelected), 0, 15);
 			}
-			p5.popMatrix();
+			menuLayer.popMatrix();
+			
+			/*
+			menuLayer.noFill();
+			for (int i = 0; i < buttons.size(); i++) {
+				menuLayer.rect(buttons.get(i).x, buttons.get(i).y, buttons.get(i).width, buttons.get(i).height);
+			}
+			*/
+			
+			menuLayer.endDraw();
+			
+			p5.pushStyle();
+			
+			p5.tint(255, 255 * animMultiplier);
+			p5.imageMode(p5.CORNER);
+			p5.image(menuLayer, 0, 0);
+			
+			p5.popStyle();
 
 		}
-
-		for (int i = 0; i < buttons.size(); i++) {
-			p5.rect(buttons.get(i).x, buttons.get(i).y, buttons.get(i).width, buttons.get(i).height);
-		}
+		
+		
 
 	}
 
@@ -161,9 +200,21 @@ public class GameMenu {
 		for (int i = 0; i < buttons.size(); i++) {
 			if (buttons.get(i).contains(p5.mouseX, p5.mouseY)) {
 				levelSelected = i;
-				p5.println("Hovering Over: " + levelSelected);
+				//p5.println("Hovering Over: " + levelSelected);
 				break;
 			}
+		}
+	}
+	
+	public int getSelectedLevel() {
+		return levelSelected;
+	}
+	
+	public boolean isActive(){
+		if (animMultiplier > 0.99) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -171,8 +222,6 @@ public class GameMenu {
 		return PAppletSingleton.getInstance().getP5Applet();
 	}
 
-	public int getSelectedLevel() {
-		return levelSelected;
-	}
+
 
 }

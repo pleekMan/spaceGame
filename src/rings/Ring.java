@@ -32,7 +32,7 @@ public class Ring {
 	PImage ringImageMask;
 	public static float maxDiameterAllRings;
 
-	boolean enableMotion;
+	public boolean enableMotion;
 
 	public Ring(float _x, float _y, float zDisplace, int _color, float _outer, float _inner) {
 		p5 = getP5();
@@ -86,7 +86,7 @@ public class Ring {
 		// ringBuffer.fill(0,10);;
 		// ringBuffer.rect(0,0,ringBuffer.width, ringBuffer.height);
 
-		ringBuffer.pushMatrix();	
+		ringBuffer.pushMatrix();
 
 		/*
 		 * ringBuffer.textureMode(p5.NORMAL); ringBuffer.beginShape();
@@ -118,10 +118,10 @@ public class Ring {
 
 		ringBuffer.image(ringImage, 0, 0, ringBuffer.width, ringBuffer.height);
 
-		ringBuffer.fill(255);
-		ringBuffer.noStroke();
-		ringBuffer.ellipse(100, 0, 20, 20);
-		;
+		//ringBuffer.fill(255);
+		//ringBuffer.noStroke();
+		//ringBuffer.ellipse(100, 0, 20, 20);
+		
 
 		ringBuffer.popMatrix();
 
@@ -170,23 +170,16 @@ public class Ring {
 		// p5.line(limitInner, 0, limitOuter, 0);
 
 		// DRAW TUNNEL
-		if (isInTunnelLock()) {
-			p5.strokeWeight(3);
-		}
-		// p5.strokeWeight(1);
-		p5.noFill();
-		for (float i = 0; i < 1.0f; i += 0.1f) {
-			float distance = (limitInner + ((limitOuter - limitInner)) * i);
-			p5.arc(0, 0, distance, distance, -tunnelSpread, tunnelSpread);
-		}
-
+		
+		showRingTunnel();
+		
 		p5.popStyle();
 
 		p5.popMatrix();
 
 		// p5.text(angularPos, pos.x, pos.y - limitOuter);
 
-		showTunnelCenter();
+		// showTunnelCenterLock();
 
 	}
 
@@ -194,7 +187,34 @@ public class Ring {
 		return pos;
 	}
 
-	private void showTunnelCenter() {
+	private void showRingTunnel() {
+
+		//p5.fill(25,40,80,127);
+		//p5.arc(0, 0, limitOuter, limitOuter, -tunnelSpread, tunnelSpread, p5.CHORD);
+		
+		if (isInTunnelLock()) {
+			p5.strokeWeight(1);
+		} else {
+			p5.strokeWeight(5);
+		}
+		
+		p5.noFill();
+
+		for (float i = 0; i < 10; i += 1f) {
+			if(i % 2 == 0){
+				p5.stroke(25,40,80);
+			} else {
+				p5.stroke(255);
+			}
+			
+			float distance = (limitInner + ((limitOuter - limitInner) * (1f / 10) * i ));
+			p5.arc(0, 0, distance, distance, -tunnelSpread, tunnelSpread);
+		}
+		
+		
+	}
+
+	private void showTunnelCenterLock() {
 
 		p5.stroke(255, 0, 0);
 
@@ -275,11 +295,11 @@ public class Ring {
 			}
 		} else {
 			if (angularPos > previousAngularPos) {
-				//previousAngularPos = p5.TWO_PI + (previousAngularPos * 2);
-				//previousAngularPos = p5.TWO_PI;
+				// previousAngularPos = p5.TWO_PI + (previousAngularPos * 2);
+				// previousAngularPos = p5.TWO_PI;
 			}
 		}
- 
+
 		return angularPos - previousAngularPos;
 	}
 
@@ -289,8 +309,8 @@ public class Ring {
 
 		// System.out.println(shipToCenter);
 
-		p5.stroke(0, 0, 255);
-		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
+		//p5.stroke(0, 0, 255);
+		//p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		/*
 		 * if (getAngularVelocity() < 0) { shipToCenter.rotate(p5.HALF_PI); }
@@ -300,16 +320,16 @@ public class Ring {
 		 */
 		shipToCenter.rotate(-p5.HALF_PI);
 
-		p5.stroke(0, 255, 0);
-		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
+		//p5.stroke(0, 255, 0);
+		//p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		shipToCenter.normalize();
 		float mg = p5.dist(inVector.x, inVector.y, pos.x, pos.y);
 		shipToCenter.mult(getAngularVelocity() * mg);
 		// System.out.println("ShipToCenter: " + mg + " / AngVel: " +
-		// getAngularVelocity() + " / Result: " + getAngularVelocity() * mg);
+		//// getAngularVelocity() + " / Result: " + getAngularVelocity() * mg);
 		p5.stroke(255, 0, 0);
-		p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
+		//p5.line(inVector.x, inVector.y, inVector.x + shipToCenter.x, inVector.y + shipToCenter.y);
 
 		return shipToCenter;
 	}

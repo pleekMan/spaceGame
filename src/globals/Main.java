@@ -47,7 +47,9 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		background(25, 25, 50);
+		//if (!levelManager.isDead) {
+			background(25, 25, 50);
+		//}
 
 		// DOTTED BACKGROUND
 		stroke(200);
@@ -63,17 +65,21 @@ public class Main extends PApplet {
 			rotateX(QUARTER_PI);
 		}
 
-		levelManager.update();
-		levelManager.render();
+		if (!gameMenu.isActive()) {
+			levelManager.update();
+			levelManager.render();
+		}
+		
 
 		if (draw3D) {
 			popMatrix();
 
 		}
 
-		levelManager.render2D();
 
 		hint(DISABLE_DEPTH_TEST);
+		
+		levelManager.render2D();
 		
 		gameMenu.render();
 		
@@ -95,10 +101,6 @@ public class Main extends PApplet {
 
 		if (key == 'c') {
 			Ship.applyCentrifugeForce = !Ship.applyCentrifugeForce;
-		}
-
-		if (key == 'l') {
-			loop();
 		}
 
 		if (key == 'f') {
@@ -130,7 +132,9 @@ public class Main extends PApplet {
 
 	public void mousePressed() {
 		
-		ship.onMousePressed();
+		if (!gameMenu.isActive()) {	
+			ship.onMousePressed();
+		}
 		
 		//gameMenu.onMousePressed();
 		
