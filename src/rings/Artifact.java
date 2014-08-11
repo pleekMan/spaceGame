@@ -1,7 +1,9 @@
 package rings;
 
+import ddf.minim.AudioPlayer;
 import processing.core.PImage;
 import processing.core.PVector;
+import ships.Ship;
 import globals.LevelManager;
 import globals.Main;
 import globals.PAppletSingleton;
@@ -16,6 +18,7 @@ public class Artifact {
 	String name;
 	String description;
 	PImage image;
+	AudioPlayer soundEffect;
 
 	Balloon balloon;
 
@@ -36,6 +39,7 @@ public class Artifact {
 
 		balloon = new Balloon(pos.x - 10, pos.y, name, description);
 		balloon.setAni(LevelManager.getAni());
+		
 
 	}
 
@@ -69,12 +73,18 @@ public class Artifact {
 
 		// p5.text(description, pos.x, pos.y - size);
 
-		balloon.render();
+		if (!Ship.controlled) {
+			balloon.render();
+		}
 	}
 
 	public boolean collidedWith(float _x, float _y) {
 		float distancia = p5.dist(pos.x, pos.y, _x, _y);
 		if (distancia < (size)) {
+			if (!soundEffect.isPlaying()) {
+				soundEffect.rewind();
+				soundEffect.play();
+			}
 			return true;
 		} else {
 			return false;
@@ -102,9 +112,15 @@ public class Artifact {
 		image = _artifactImage;
 	}
 
+	public void setSound(String soundPath) {
+		soundEffect = LevelManager.minim.loadFile(soundPath);
+	}
+	
 	// P5 SINGLETON
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
 	}
+
+
 
 }

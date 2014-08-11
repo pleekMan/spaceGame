@@ -16,7 +16,7 @@ public class GameMenu {
 	Main p5;
 
 	PGraphics menuLayer;
-	
+
 	ArrayList<Rectangle> buttons;
 	ArrayList<PImage> infoBoxes;
 	PImage backImage;
@@ -25,17 +25,18 @@ public class GameMenu {
 	float animMultiplier;
 
 	int levelSelected;
-	
+	int lastLevelSelected;
+
 	VortexParticle[] particles;
 
-	AudioPlayer sonido;
+	AudioPlayer[] introSounds;
 
 	public GameMenu() {
 		p5 = getP5();
 	}
 
 	public void setup() {
-		
+
 		menuLayer = p5.createGraphics(p5.width, p5.height);
 
 		animMultiplier = 1f;
@@ -44,6 +45,7 @@ public class GameMenu {
 		wheel = p5.loadImage("wheel_blank.png");
 
 		levelSelected = -1;
+		lastLevelSelected = -2;
 
 		buttons = new ArrayList<Rectangle>();
 		infoBoxes = new ArrayList<PImage>();
@@ -55,16 +57,15 @@ public class GameMenu {
 		}
 		placeButtons();
 		loadInfoBoxes();
-		
+
+		loadIntroSounds();
+
 		particles = new VortexParticle[400];
 		for (int i = 0; i < particles.length; i++) {
 			particles[i] = new VortexParticle();
 		}
 
-		// sonido = LevelManager.minim.loadFile(filename);
-
 	}
-
 
 	public void update() {
 		/*
@@ -75,18 +76,17 @@ public class GameMenu {
 
 	public void render() {
 
-		
 		isHovering();
 
 		menuLayer.beginDraw();
 		menuLayer.background(0);
-		
+
 		menuLayer.imageMode(p5.CENTER);
 		menuLayer.pushStyle();
 
 		if (animMultiplier > 0.01) {
 
-			//menuLayer.tint(255, 255 * animMultiplier);
+			// menuLayer.tint(255, 255 * animMultiplier);
 
 			menuLayer.pushMatrix();
 
@@ -94,8 +94,7 @@ public class GameMenu {
 			menuLayer.scale(1 + (1 - animMultiplier));
 
 			menuLayer.image(backImage, 0, 0);
-			
-			
+
 			// RENDER vortex PARTICLES
 			for (int i = 0; i < particles.length; i++) {
 				particles[i].update();
@@ -104,33 +103,30 @@ public class GameMenu {
 
 			menuLayer.popStyle();
 
-			menuLayer.image(wheel, 0, 15);
-			
-			if(levelSelected != -1){
+			//menuLayer.image(wheel, 0, 15);
+
+			if (levelSelected != -1) {
 				menuLayer.image(infoBoxes.get(levelSelected), 0, 15);
 			}
 			menuLayer.popMatrix();
-			
+
 			/*
-			menuLayer.noFill();
-			for (int i = 0; i < buttons.size(); i++) {
-				menuLayer.rect(buttons.get(i).x, buttons.get(i).y, buttons.get(i).width, buttons.get(i).height);
-			}
-			*/
-			
+			 * menuLayer.noFill(); for (int i = 0; i < buttons.size(); i++) {
+			 * menuLayer.rect(buttons.get(i).x, buttons.get(i).y,
+			 * buttons.get(i).width, buttons.get(i).height); }
+			 */
+
 			menuLayer.endDraw();
-			
+
 			p5.pushStyle();
-			
+
 			p5.tint(255, 255 * animMultiplier);
 			p5.imageMode(p5.CORNER);
 			p5.image(menuLayer, 0, 0);
-			
+
 			p5.popStyle();
 
 		}
-		
-		
 
 	}
 
@@ -170,17 +166,30 @@ public class GameMenu {
 		buttons.get(7).y = 185;
 
 	}
-	
 
 	private void loadInfoBoxes() {
 		infoBoxes.add(p5.loadImage("levels/5/info.png"));
 		infoBoxes.add(p5.loadImage("levels/1/info.png"));
-		infoBoxes.add(p5.loadImage("levels/5/info.png"));
-		infoBoxes.add(p5.loadImage("levels/1/info.png"));
-		infoBoxes.add(p5.loadImage("levels/5/info.png"));
-		infoBoxes.add(p5.loadImage("levels/1/info.png"));
-		infoBoxes.add(p5.loadImage("levels/5/info.png"));
-		infoBoxes.add(p5.loadImage("levels/1/info.png"));		
+		infoBoxes.add(p5.loadImage("levels/0/info.png"));
+		infoBoxes.add(p5.loadImage("levels/4/info.png"));
+		infoBoxes.add(p5.loadImage("levels/3/info.png"));
+		infoBoxes.add(p5.loadImage("levels/2/info.png"));
+		infoBoxes.add(p5.loadImage("levels/6/info.png"));
+		infoBoxes.add(p5.loadImage("levels/7/info.png"));
+	}
+
+	private void loadIntroSounds() {
+
+		introSounds = new AudioPlayer[8];
+		introSounds[0] = LevelManager.minim.loadFile("levels/5/intro.mp3");
+		introSounds[1] = LevelManager.minim.loadFile("levels/1/intro.mp3");
+		introSounds[2] = LevelManager.minim.loadFile("levels/1/intro.mp3");//
+		introSounds[3] = LevelManager.minim.loadFile("levels/5/intro.mp3");//
+		introSounds[4] = LevelManager.minim.loadFile("levels/3/intro.mp3");
+		introSounds[5] = LevelManager.minim.loadFile("levels/2/intro.mp3");
+		introSounds[6] = LevelManager.minim.loadFile("levels/1/intro.mp3");//
+		introSounds[7] = LevelManager.minim.loadFile("levels/5/intro.mp3");//
+
 	}
 
 	public void onMousePressed() {
@@ -189,28 +198,35 @@ public class GameMenu {
 		 * (buttons.get(i).contains(p5.mouseX, p5.mouseY)) { levelSelected = i;
 		 * p5.println("LevelSelected: " + levelSelected); break; } }
 		 */
-		
-		//launch(levelSelected);
-		
-		
+
+		// launch(levelSelected);
+
 	}
 
 	public void isHovering() {
 		levelSelected = -1;
-		for (int i = 0; i < buttons.size(); i++) {
-			if (buttons.get(i).contains(p5.mouseX, p5.mouseY)) {
-				levelSelected = i;
-				//p5.println("Hovering Over: " + levelSelected);
-				break;
+		if (isActive()) {
+			for (int i = 0; i < buttons.size(); i++) {
+				if (buttons.get(i).contains(p5.mouseX, p5.mouseY)) {
+					
+					levelSelected = i;
+					
+					if (!introSounds[i].isPlaying()) {
+						introSounds[i].rewind();
+						introSounds[i].play();
+					}
+					// p5.println("Hovering Over: " + levelSelected);
+					break;
+				}
 			}
 		}
 	}
-	
+
 	public int getSelectedLevel() {
 		return levelSelected;
 	}
-	
-	public boolean isActive(){
+
+	public boolean isActive() {
 		if (animMultiplier > 0.99) {
 			return true;
 		} else {
@@ -221,7 +237,5 @@ public class GameMenu {
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
 	}
-
-
 
 }

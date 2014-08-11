@@ -39,6 +39,9 @@ public class LevelManager {
 
 	int atLevel = 0;
 
+	String levelName;
+	PImage gameBack;
+
 	public enum LevelState {
 		PLAY, SPLASH
 	}
@@ -57,6 +60,8 @@ public class LevelManager {
 		// levelSplash = new GameMenu();
 
 		minim = new Minim(p5);
+
+		gameBack = p5.loadImage("GameBack.png");
 
 	}
 
@@ -101,9 +106,10 @@ public class LevelManager {
 			// but a copy of.
 			rings = new ArrayList<Ring>(levelToLoad.getRings());
 			artifacts = new ArrayList<Artifact>(levelToLoad.getArtifacts());
+			levelName = levelToLoad.getName();
 
 			ship.resetPosition();
-			
+
 			for (int i = 0; i < rings.size(); i++) {
 				rings.get(i).enableMotion = true;
 			}
@@ -121,7 +127,7 @@ public class LevelManager {
 	private void buildLevelPacks() {
 
 		XML levelData;
-		levelData = p5.loadXML("levels/levelData_Single.xml");
+		levelData = p5.loadXML("levels/levelData.xml");
 
 		// LOAD ARTIFACT IMAGE
 		PImage bounceArtifactImage = p5.loadImage("artifactBounce.png");
@@ -136,10 +142,11 @@ public class LevelManager {
 			LevelPack level = new LevelPack();
 
 			PImage levelImage = p5.loadImage(allLevels[i].getString("imageUrl"));
-			PImage splashImage = p5.loadImage(allLevels[i].getString("splashUrl"));
+			// PImage splashImage =
+			// p5.loadImage(allLevels[i].getString("splashUrl"));
 
 			level.setImage(levelImage);
-			level.setSplashImage(splashImage);
+			// level.setSplashImage(splashImage);
 			level.setAnimationTool(ani);
 			level.setName(allLevels[i].getString("name"));
 
@@ -179,9 +186,11 @@ public class LevelManager {
 						actualArtifactImage = killArtifactImage;
 					}
 
+					String soundUrl = artifacts[j].getString("sound");
+
 					p5.println("Type: " + type + " / X: " + x + " / Y: " + y + " / Description: " + description);
 
-					level.addArtifact(type, x, y, name, description, actualArtifactImage);
+					level.addArtifact(type, x, y, name, description, actualArtifactImage, soundUrl);
 				}
 			}
 
@@ -266,10 +275,26 @@ public class LevelManager {
 
 		p5.hint(p5.DISABLE_DEPTH_TEST);
 
+		p5.imageMode(p5.CORNER);
+		p5.image(gameBack, 0, 0);
+
+		// DOTTED BACKGROUND
+		/*
+		p5.stroke(200);
+		for (int y = 0; y < p5.height; y += 20) {
+			for (int x = 0; x < p5.width; x += 20) {
+				p5.point(x, y);
+			}
+		}
+		*/
+
 		for (int i = 0; i < rings.size(); i++) {
 			Ring currentRing = rings.get(i);
 			currentRing.renderImageMode();
-			currentRing.renderOutlineMode();
+			
+			if (!levelCompletedTrigger) {
+				currentRing.renderOutlineMode();
+			}
 
 		}
 
@@ -280,8 +305,9 @@ public class LevelManager {
 
 		ship.render();
 
-		// levelSplash.render();
-		showTunnelCenter();
+		if (!levelCompletedTrigger) {
+			showTunnelCenter();
+		}
 
 		p5.hint(p5.ENABLE_DEPTH_TEST);
 
@@ -289,30 +315,33 @@ public class LevelManager {
 		p5.noFill();
 		p5.stroke(127);
 		p5.ellipse(rings.get(0).getPosition().x, rings.get(0).getPosition().y, ship.getSize(), ship.getSize());
-		
+
 		// DRAW THE SHIP DEAD
-		if(isDead){
+		if (isDead) {
 			float shipX = ship.getPosition().x;
 			float shipY = ship.getPosition().y;
 			p5.noFill();
 			p5.stroke(255, 0, 0);
-			p5.line(0 , 0, p5.width, p5.height);
+			p5.line(0, 0, p5.width, p5.height);
 			p5.line(p5.width, 0, 0, p5.height);
-			
+
 			for (int i = 0; i < 10; i++) {
 				p5.ellipse(shipX, shipY, p5.random(50), p5.random(50));
 			}
-			
+
 		}
 
 	}
 
 	public void render2D() {
-		timer.update();
-		timer.render();
 
-		for (int i = 0; i < artifacts.size(); i++) {
-			artifacts.get(i).render();
+		// timer.update();
+		// timer.render();
+		
+		if (!levelCompletedTrigger) {
+			for (int i = 0; i < artifacts.size(); i++) {
+				artifacts.get(i).render();
+			}
 		}
 
 		// ship.render();
@@ -320,7 +349,16 @@ public class LevelManager {
 			ship.render2D();
 		}
 		
+		p5.pushStyle();
 		
+		p5.fill(255,50);
+		p5.textAlign(p5.CENTER);
+		p5.textSize(50);
+		p5.text(levelName, p5.width * 0.5f, 100);
+		
+		
+		p5.popStyle();
+
 	}
 
 	public void setShip(Ship _ship) {

@@ -23,13 +23,13 @@ public class Main extends PApplet {
 		smooth();
 
 		ship = new Ship();
-
-		gameMenu = new GameMenu();
-		gameMenu.setup();
 		
 		levelManager = new LevelManager();
-		levelManager.setup(2, ship, gameMenu);
+		gameMenu = new GameMenu();
 		
+		levelManager.setup(2, ship, gameMenu);
+		gameMenu.setup();
+
 		
 
 		draw3D = false;
@@ -47,17 +47,10 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		//if (!levelManager.isDead) {
-			background(25, 25, 50);
-		//}
+		background(25, 25, 50);
 
-		// DOTTED BACKGROUND
-		stroke(200);
-		for (int y = 0; y < height; y += 20) {
-			for (int x = 0; x < width; x += 20) {
-				point(x, y);
-			}
-		}
+
+		
 
 		if (draw3D) {
 			pushMatrix();
@@ -154,8 +147,6 @@ public class Main extends PApplet {
 
 	public void mouseDragged() {
 		// ship.onMouseDragged();
-
-		line(width * 0.5f, height * 0.5f, mouseX, mouseY);
 	}
 
 	public void mouseMoved() {

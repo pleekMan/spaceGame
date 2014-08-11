@@ -19,7 +19,7 @@ public class Ship {
 	float rotation;
 	int shipColor;
 
-	boolean controlled = false;
+	public static boolean controlled = false;
 	PVector externalForce;
 	public static boolean applyCentrifugeForce;
 
@@ -104,6 +104,13 @@ public class Ship {
 		
 		p5.popMatrix();
 		p5.popStyle();
+		
+		if (controlled) {
+			// DRAW VECTOR LINE
+			p5.stroke(255);
+			p5.strokeWeight(2);
+			p5.line(p5.width * 0.5f, p5.height * 0.5f, p5.mouseX, p5.mouseY);
+		}
 	}
 
 	public PVector getPosition() {

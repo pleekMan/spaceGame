@@ -31,7 +31,6 @@ public class ShipController {
 			p5.stroke(200, 200 - (200 * i));
 			p5.ellipse(center.x, center.y, maxRadius * (i), maxRadius * (i));
 		}
-
 	}
 
 	public PVector getForce() {

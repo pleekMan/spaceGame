@@ -53,11 +53,12 @@ public class LevelPack {
 		
 	}
 	
-	public void addArtifact(int type, float _x, float _y, String _name, String description, PImage _artifactImage){
+	public void addArtifact(int type, float _x, float _y, String _name, String description, PImage _artifactImage, String soundPath){
 		
 		Artifact newArtifact = new Artifact();
 		newArtifact.setup(type, _x, _y, _name, description);
 		newArtifact.setImage(_artifactImage);
+		newArtifact.setSound(soundPath);
 		
 		artifacts.add(newArtifact);
 	}
@@ -76,6 +77,9 @@ public class LevelPack {
 	
 	public void setName(String _name){
 		name = _name;
+	}
+	public String getName(){
+		return name;
 	}
 	
 	public void setAnimationTool(Ani _ani){
