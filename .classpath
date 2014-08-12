@@ -13,5 +13,17 @@
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/mp3spi1.9.4.jar"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/tritonus_aos.jar"/>
 	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/minim/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/gluegen-rt-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="/Projects/Eclipse WorkSpace/libraries/openGL/jogl-all-natives-windows-i586.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

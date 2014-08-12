@@ -5,6 +5,17 @@ import processing.core.*;
 import rings.Ring;
 import ships.Ship;
 
+// NEEDED TO CREATE System/Library/Frameworks/gluegen-rt.Framework/
+// AND COPY P5s gluegen-rt and gluegen-rt-universal
+
+// TO RUN: FatJar
+// RUN FROM TERMINAL (AT FOLDER): java -Xmx512m -jar SpaceGame_fat.jar
+// -Xmx###m : Max heap (memory) to use is ###. "m" means Mbytes
+// Also: java -Xms128m -Xmx1024m -jar SpaceGame_fat.jar (where Xms###m: Minimum Heap Size)
+
+//TO RUN: ProClipsing Export
+//RUN FROM TERMINAL (AT FOLDER): open Main.app --args -Xmx512m
+
 public class Main extends PApplet {
 
 	Ship ship;
@@ -38,7 +49,7 @@ public class Main extends PApplet {
 
 	public static void main(String args[]) {
 		PApplet.main(new String[] { Main.class.getName() });
-		// PApplet.main(new String[] { "--present", Main.class.getName() }); //
+		//PApplet.main(new String[] { "--present", Main.class.getName() }); //
 		// PRESENT MODE
 	}
 
@@ -76,11 +87,11 @@ public class Main extends PApplet {
 		
 		gameMenu.render();
 		
-		fill(255);
+		//fill(255);
 		// text("FR: " + frameRate, 20, 20);
-		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
+		//text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
 
-		text("FR: " + frameRate, 20, 20);
+		//text("FR: " + frameRate, 20, 20);
 		
 		
 		hint(ENABLE_DEPTH_TEST);

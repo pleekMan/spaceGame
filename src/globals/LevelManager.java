@@ -241,7 +241,7 @@ public class LevelManager {
 
 			artifacts.get(i).update();
 
-			if (artifacts.get(i).collidedWith(ship.getPosition().x, ship.getPosition().y)) {
+			if (artifacts.get(i).collidedWith(ship)) {
 				if (artifacts.get(i).getType() == 1 && !levelCompletedTrigger) {
 					// GAME OVER
 					isDead = true;

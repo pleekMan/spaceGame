@@ -103,7 +103,7 @@ public class GameMenu {
 
 			menuLayer.popStyle();
 
-			//menuLayer.image(wheel, 0, 15);
+			// menuLayer.image(wheel, 0, 15);
 
 			if (levelSelected != -1) {
 				menuLayer.image(infoBoxes.get(levelSelected), 0, 15);
@@ -132,11 +132,12 @@ public class GameMenu {
 
 	public void appear() {
 		// fadeIn.to(this, 1f, 0, "imageTint", 255);
-		LevelManager.getAni().to(this, 1f, 4f, "animMultiplier", 1f);
+		LevelManager.getAni().to(this, 2f, 4f, "animMultiplier", 1f);
 	}
 
 	public void disappear() {
-		LevelManager.getAni().to(this, 1f, 0, "animMultiplier", 0f);
+		LevelManager.getAni().to(this, 1f, 0, "animMultiplier", 0f, Ani.EXPO_IN);
+		//LevelManager.getAni().to
 	}
 
 	private void placeButtons() {
@@ -204,19 +205,24 @@ public class GameMenu {
 	}
 
 	public void isHovering() {
+
 		levelSelected = -1;
+		// lastLevelSelected = -1;
+
 		if (isActive()) {
+
 			for (int i = 0; i < buttons.size(); i++) {
 				if (buttons.get(i).contains(p5.mouseX, p5.mouseY)) {
-					
 					levelSelected = i;
-					
-					if (!introSounds[i].isPlaying()) {
-						introSounds[i].rewind();
-						introSounds[i].play();
-					}
-					// p5.println("Hovering Over: " + levelSelected);
 					break;
+				}
+			}
+
+			if (levelSelected != lastLevelSelected && levelSelected != -1) {
+				lastLevelSelected = levelSelected;
+				if (!introSounds[levelSelected].isPlaying()) {
+					introSounds[levelSelected].rewind();
+					introSounds[levelSelected].play();
 				}
 			}
 		}

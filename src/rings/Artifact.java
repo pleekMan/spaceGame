@@ -90,6 +90,19 @@ public class Artifact {
 			return false;
 		}
 	}
+	
+	public boolean collidedWith(Ship _ship){
+		float distancia = p5.dist(pos.x, pos.y, _ship.getPosition().x, _ship.getPosition().y);
+		if (distancia < (size) && Ship.controlled) {
+			if (!soundEffect.isPlaying()) {
+				soundEffect.rewind();
+				soundEffect.play();
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public void setPosition(int _x, int _y) {
 		pos.x = _x;
