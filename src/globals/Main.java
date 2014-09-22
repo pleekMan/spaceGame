@@ -22,32 +22,37 @@ public class Main extends PApplet {
 
 	LevelManager levelManager;
 	GameMenu gameMenu;
-	
+
 	boolean draw3D;
 
 	public void setup() {
 
 		setPAppletSingleton();
 
+		frame.setBackground(new java.awt.Color(0, 0, 0));
+
 		size(1024, 768, P3D);
 		frameRate(30);
 		smooth();
 
 		ship = new Ship();
-		
+
 		levelManager = new LevelManager();
 		gameMenu = new GameMenu();
-		
+
 		levelManager.setup(2, ship, gameMenu);
 		gameMenu.setup();
-
-		
 
 		draw3D = false;
 
 	}
 
 	public static void main(String args[]) {
+
+		/*
+		 * if (args.length > 0) { String memorySize = args[0]; }
+		 */
+
 		PApplet.main(new String[] { Main.class.getName() });
 		//PApplet.main(new String[] { "--present", Main.class.getName() }); //
 		// PRESENT MODE
@@ -60,9 +65,6 @@ public class Main extends PApplet {
 	public void draw() {
 		background(25, 25, 50);
 
-
-		
-
 		if (draw3D) {
 			pushMatrix();
 			translate(0, 0, -200);
@@ -73,27 +75,24 @@ public class Main extends PApplet {
 			levelManager.update();
 			levelManager.render();
 		}
-		
 
 		if (draw3D) {
 			popMatrix();
 
 		}
 
-
 		hint(DISABLE_DEPTH_TEST);
-		
-		levelManager.render2D();
-		
-		gameMenu.render();
-		
-		//fill(255);
-		// text("FR: " + frameRate, 20, 20);
-		//text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
 
-		//text("FR: " + frameRate, 20, 20);
-		
-		
+		levelManager.render2D();
+
+		gameMenu.render();
+
+		// fill(255);
+		// text("FR: " + frameRate, 20, 20);
+		// text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
+
+		// text("FR: " + frameRate, 20, 20);
+
 		hint(ENABLE_DEPTH_TEST);
 
 	}
@@ -121,32 +120,31 @@ public class Main extends PApplet {
 			if (keyCode == UP) {
 			}
 		}
-		
-		
+
 		if (key == 'o') {
 			gameMenu.appear();
 		}
 		if (key == 'l') {
 			gameMenu.disappear();
 		}
-		
+
 		levelManager.onKeyPressed(key);
 
 	}
 
 	public void mousePressed() {
-		
-		if (!gameMenu.isActive()) {	
+
+		if (!gameMenu.isActive()) {
 			ship.onMousePressed();
 		}
-		
-		//gameMenu.onMousePressed();
-		
-		if(gameMenu.getSelectedLevel() != -1){
+
+		// gameMenu.onMousePressed();
+
+		if (gameMenu.getSelectedLevel() != -1) {
 			levelManager.loadLevel(gameMenu.getSelectedLevel());
 			gameMenu.disappear();
 		}
-		
+
 	}
 
 	public void mouseReleased() {

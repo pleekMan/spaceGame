@@ -10,6 +10,7 @@ import java.util.Collections;
 import Particles.Particle;
 import levels.LevelPack;
 import levels.GameMenu;
+import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 import de.looksgood.ani.Ani;
 import processing.core.PImage;
@@ -41,6 +42,8 @@ public class LevelManager {
 
 	String levelName;
 	PImage gameBack;
+	
+	AudioPlayer music;
 
 	public enum LevelState {
 		PLAY, SPLASH
@@ -62,6 +65,10 @@ public class LevelManager {
 		minim = new Minim(p5);
 
 		gameBack = p5.loadImage("GameBack.png");
+		
+		music = minim.loadFile("music.mp3");
+		music.loop();
+		music.setVolume(0.5f);
 
 	}
 
@@ -351,7 +358,7 @@ public class LevelManager {
 		
 		p5.pushStyle();
 		
-		p5.fill(255,50);
+		p5.fill(127,100);
 		p5.textAlign(p5.CENTER);
 		p5.textSize(50);
 		p5.text(levelName, p5.width * 0.5f, 100);

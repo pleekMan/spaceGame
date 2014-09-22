@@ -184,12 +184,12 @@ public class GameMenu {
 		introSounds = new AudioPlayer[8];
 		introSounds[0] = LevelManager.minim.loadFile("levels/5/intro.mp3");
 		introSounds[1] = LevelManager.minim.loadFile("levels/1/intro.mp3");
-		introSounds[2] = LevelManager.minim.loadFile("levels/1/intro.mp3");//
-		introSounds[3] = LevelManager.minim.loadFile("levels/5/intro.mp3");//
+		introSounds[2] = LevelManager.minim.loadFile("levels/0/intro.mp3");
+		introSounds[3] = LevelManager.minim.loadFile("levels/5/intro.mp3");
 		introSounds[4] = LevelManager.minim.loadFile("levels/3/intro.mp3");
 		introSounds[5] = LevelManager.minim.loadFile("levels/2/intro.mp3");
-		introSounds[6] = LevelManager.minim.loadFile("levels/1/intro.mp3");//
-		introSounds[7] = LevelManager.minim.loadFile("levels/5/intro.mp3");//
+		introSounds[6] = LevelManager.minim.loadFile("levels/6/intro.mp3");
+		introSounds[7] = LevelManager.minim.loadFile("levels/5/intro.mp3");
 
 	}
 
